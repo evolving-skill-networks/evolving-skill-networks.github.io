@@ -1,0 +1,28 @@
+{
+  "total_duration_ms": 16121,
+  "events": [
+    {"t_ms": 0,    "kind": "skillStart", "inventory": {}},
+    {"t_ms": 200,  "kind": "onChat", "chat": "ensureLogs: target 4 acacia_log"},
+    {"t_ms": 800,  "kind": "onChat", "chat": "Found nearby logs at (190, 78, -113)"},
+    {"t_ms": 1200, "kind": "onChat", "chat": "Attempt 1: trying to mine 4 acacia_log(s)"},
+    {"t_ms": 1500, "inventory": {"acacia_log": 1}},
+    {"t_ms": 3000, "inventory": {"acacia_log": 3}},
+    {"t_ms": 3200, "kind": "onChat", "chat": "Collect finish!"},
+    {"t_ms": 4500, "inventory": {"acacia_log": 4, "acacia_planks": 4}},
+    {"t_ms": 5000, "kind": "onChat", "chat": "ensurePlanks: crafted 4 planks"},
+    {"t_ms": 5500, "kind": "onChat", "chat": "Success: ensureLogs (1.2s)"},
+    {"t_ms": 6500, "inventory": {"acacia_planks": 16, "stick": 4}},
+    {"t_ms": 7000, "kind": "onChat", "chat": "ensureCraftingTable: building"},
+    {"t_ms": 8000, "inventory": {"acacia_planks": 12, "stick": 4, "crafting_table": 1}},
+    {"t_ms": 8500, "kind": "onChat", "chat": "Success: placed crafting_table at (190, 79, -113)"},
+    {"t_ms": 9000, "kind": "onChat", "chat": "ensureWoodenPickaxe: starting"},
+    {"t_ms": 9500, "inventory": {"acacia_planks": 9, "stick": 2, "crafting_table": 1, "wooden_pickaxe": 1}},
+    {"t_ms": 10000, "kind": "onChat", "chat": "Success: crafted wooden_pickaxe"},
+    {"t_ms": 11000, "inventory": {"acacia_planks": 9, "stick": 2, "crafting_table": 1, "wooden_pickaxe": 1, "cobblestone": 3}},
+    {"t_ms": 11500, "kind": "onChat", "chat": "ensureCobble: 3/8 mined"},
+    {"t_ms": 13000, "inventory": {"acacia_planks": 9, "stick": 2, "crafting_table": 1, "wooden_pickaxe": 1, "cobblestone": 8, "iron_ore": 1}},
+    {"t_ms": 13500, "kind": "onChat", "chat": "ensureIronOre: 1 ore mined"},
+    {"t_ms": 15000, "inventory": {"acacia_planks": 7, "stick": 1, "crafting_table": 1, "wooden_pickaxe": 1, "cobblestone": 8, "iron_ore": 2, "iron_ingot": 2, "diamond": 1}},
+    {"t_ms": 15500, "kind": "onChat", "chat": "Success: ensureDiamond complete"}
+  ]
+}

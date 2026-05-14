@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evolving Programmatic Skill Networks</title>
+  <meta name="description" content="A continual-learning agent whose skill graph develops by mechanisms borrowed from neural-network training: symbolic credit assignment, adaptive learning rates for skills, and structural refactoring under a trust region." />
+  <meta property="og:title" content="Evolving Programmatic Skill Networks" />
+  <meta property="og:description" content="What if programs could learn like neural networks? Symbolic credit assignment, adaptive stabilization, structural refactoring." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Source+Serif+Pro:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="static/css/project.css" />
+  <link rel="stylesheet" href="static/css/project_v3.css" />
+  <link rel="stylesheet" href="static/css/highlight-github.min.css" />
+</head>
+<body>
+
+  <!-- ========== Top nav ========== -->
+  <nav class="v3-nav">
+    <div class="v3-nav-inner">
+      <span class="brand">PSN</span>
+      <a href="#challenge">Challenge</a>
+      <a href="#analogy">Analogy</a>
+      <a href="#reflect">REFLECT</a>
+      <a href="#gating">Gating</a>
+      <a href="#refactor">Refactor</a>
+      <a href="#noise">Noise</a>
+      <a href="#reuse">Reuse</a>
+      <a href="#performance">Results</a>
+      <a href="#explore">Explore</a>
+    </div>
+  </nav>
+
+  <!-- ============================================================== -->
+  <!-- §0 HERO                                                         -->
+  <!-- ============================================================== -->
+  <section class="v3-hero">
+    <h1>Evolving Programmatic Skill Networks</h1>
+    <p class="tagline">
+      A continual-learning agent whose skill graph develops through mechanisms
+      borrowed from neural-network training.
+    </p>
+    <p class="authors">
+      <strong>Haochen Shi</strong><sup>1,2</sup> &middot;
+      <strong>Xingdi Yuan</strong><sup>3,*</sup> &middot;
+      <strong>Bang Liu</strong><sup>1,2,4,*</sup>
+    </p>
+    <p class="affiliations">
+      <sup>1</sup>Université de Montréal &middot;
+      <sup>2</sup>Mila &middot;
+      <sup>3</sup>Microsoft Research &middot;
+      <sup>4</sup>Canada CIFAR AI Chair &nbsp;
+      <sup>*</sup>Equal advising
+    </p>
+    <div class="v3-hero-buttons">
+      <a class="v3-btn is-primary" href="https://arxiv.org/abs/2601.03509" target="_blank" rel="noopener">arXiv 2601.03509</a>
+      <span class="v3-btn is-disabled">Code · coming soon</span>
+      <a class="v3-btn" href="#bibtex">BibTeX</a>
+    </div>
+    <div class="v3-hero-frame">
+      <iframe src="hero_preview_v2.html" title="3-panel synced hero — Minecraft frame, skill graph, and J(N) objective curves over training iterations" height="780" loading="lazy"></iframe>
+    </div>
+  </section>
+
+
+  <!-- ============================================================== -->
+  <!-- §1 SHARED QUEST                                                 -->
+  <!-- ============================================================== -->
+  <section class="v3-section v3-shared-quest" id="quest">
+    <span class="eyebrow">§1 The shared quest</span>
+    <h2>Building agents for open-ended worlds</h2>
+    <div class="quest-img-wrap">
+      <img src="static/images/quest/shared_quest.png" alt="Open-ended Minecraft world — the agent's playground." />
+    </div>
+    <blockquote>
+      Embodied agents must continually acquire, refine, and reuse a growing
+      repertoire of skills. The central challenge isn't just <em>learning</em>
+      skills, it's <em>continually reorganizing and improving</em> them in
+      dynamic, open-ended environments, without forgetting what came before.
+    </blockquote>
+  </section>
+
+
+  <!-- ============================================================== -->
+  <!-- §2 BOTTLENECK                                                   -->
+  <!-- ============================================================== -->
+  <section class="v3-section" id="challenge">
+    <span class="eyebrow">§2 The bottleneck</span>
+    <h2>Static skill libraries limit continual improvement</h2>
+    <p class="lead">
+      Today's LLM agents represent skills either as flat libraries or static
+      graphs. Both lack a unified framework for credit assignment and
+      structural reorganization as new tasks arrive.
+    </p>
+
+    <div class="v3-taxonomy-3up">
+      <div class="v3-taxonomy-card">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 160 130" xmlns="http://www.w3.org/2000/svg">
+            <!-- Flat library: scattered orange dots, no edges -->
+            <g fill="#d97757">
+              <circle cx="35" cy="35" r="6"/>
+              <circle cx="80" cy="20" r="6"/>
+              <circle cx="125" cy="40" r="6"/>
+              <circle cx="50" cy="65" r="6"/>
+              <circle cx="105" cy="65" r="6"/>
+              <circle cx="30" cy="95" r="6"/>
+              <circle cx="75" cy="105" r="6"/>
+              <circle cx="125" cy="100" r="6"/>
+              <circle cx="90" cy="55" r="6"/>
+              <circle cx="20" cy="60" r="6"/>
+            </g>
+          </svg>
+        </div>
+        <h3>Flat library</h3>
+        <p>Skills indexed by similarity. <em>Voyager-style</em>. Cannot compose; new tasks don't decompose into existing skills.</p>
+      </div>
+      <div class="v3-taxonomy-card">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 160 130" xmlns="http://www.w3.org/2000/svg">
+            <!-- Static graph: dense connections, fixed -->
+            <g stroke="#d97757" stroke-width="0.8" stroke-opacity="0.6" fill="none">
+              <line x1="40" y1="35" x2="80" y2="20"/>
+              <line x1="80" y1="20" x2="120" y2="35"/>
+              <line x1="40" y1="35" x2="60" y2="65"/>
+              <line x1="120" y1="35" x2="100" y2="65"/>
+              <line x1="60" y1="65" x2="100" y2="65"/>
+              <line x1="60" y1="65" x2="80" y2="105"/>
+              <line x1="100" y1="65" x2="80" y2="105"/>
+              <line x1="40" y1="35" x2="100" y2="65"/>
+              <line x1="120" y1="35" x2="60" y2="65"/>
+              <line x1="80" y1="20" x2="80" y2="105"/>
+            </g>
+            <g fill="#d97757">
+              <circle cx="40" cy="35" r="6"/>
+              <circle cx="80" cy="20" r="6"/>
+              <circle cx="120" cy="35" r="6"/>
+              <circle cx="60" cy="65" r="6"/>
+              <circle cx="100" cy="65" r="6"/>
+              <circle cx="80" cy="105" r="6"/>
+            </g>
+          </svg>
+        </div>
+        <h3>Static graph</h3>
+        <p>Hand-authored library, fixed at design time. <em>ODYSSEY-style</em> (183 skills). No learning, reuses within its fixed repertoire, but cannot grow and adapt to novel tasks.</p>
+      </div>
+      <div class="v3-taxonomy-card is-ours">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 160 130" xmlns="http://www.w3.org/2000/svg">
+            <!-- Evolving network: growing tree with arrows -->
+            <g stroke="#3a5d8a" stroke-width="1.0" fill="none">
+              <line x1="80" y1="20" x2="50" y2="50"/>
+              <line x1="80" y1="20" x2="110" y2="50"/>
+              <line x1="50" y1="50" x2="35" y2="85"/>
+              <line x1="50" y1="50" x2="65" y2="85"/>
+              <line x1="110" y1="50" x2="100" y2="85"/>
+              <line x1="110" y1="50" x2="125" y2="85"/>
+              <!-- skip edges -->
+              <line x1="50" y1="50" x2="100" y2="85" stroke-dasharray="3 2" stroke-opacity="0.6"/>
+              <line x1="65" y1="85" x2="125" y2="85" stroke-dasharray="3 2" stroke-opacity="0.6"/>
+              <!-- growth arrow -->
+              <path d="M 110 100 L 130 110 L 125 95 M 110 100 L 130 110" stroke="#d97757" stroke-width="1.2" fill="none" />
+            </g>
+            <g fill="#3a5d8a">
+              <circle cx="80" cy="20" r="7" stroke="#3a5d8a" stroke-width="1.5" fill="white"/>
+              <circle cx="50" cy="50" r="6"/>
+              <circle cx="110" cy="50" r="6"/>
+              <circle cx="35" cy="85" r="5"/>
+              <circle cx="65" cy="85" r="5"/>
+              <circle cx="100" cy="85" r="5"/>
+              <circle cx="125" cy="85" r="5"/>
+            </g>
+          </svg>
+        </div>
+        <h3>Evolving network <span style="color: var(--v3-orange); font-size: 0.85rem;">→ ours</span></h3>
+        <p>Skills as programs in a directed graph that <em>continually reorganizes</em> through symbolic updates as the agent learns.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================== -->
+  <!-- §3 ANALOGY PROPOSAL                                             -->
+  <!-- ============================================================== -->
+  <section class="v3-section" id="analogy">
+    <span class="eyebrow">§3 The proposal</span>
+    <h2>What if programs could learn like neural networks?</h2>
+    <p class="lead">
+      We've mastered learning in continuous, parameterized systems.
+      What if we applied the same powerful optimization principles to a
+      network of <em>discrete, symbolic programs</em>?
+    </p>
+
+    <div class="v3-analogy-arrows">
+      <div class="arr-cell">
+        <div class="role">Neural network training</div>
+        <strong>Backpropagation</strong>
+        <p style="margin: 0.25rem 0 0; color: var(--v3-muted); font-size: 0.9rem;">credit flows along the activation path</p>
+      </div>
+      <div class="arr-arrow">→</div>
+      <div class="arr-cell">
+        <div class="role">Programmatic skill network</div>
+        <strong>Symbolic credit assignment</strong>
+        <p style="margin: 0.25rem 0 0; color: var(--v3-muted); font-size: 0.9rem;">REFLECT diagnoses each skill on the trace</p>
+      </div>
+
+      <div class="arr-cell">
+        <div class="role">Neural network training</div>
+        <strong>Learning-rate scheduling</strong>
+        <p style="margin: 0.25rem 0 0; color: var(--v3-muted); font-size: 0.9rem;">freeze converged layers, keep new ones plastic</p>
+      </div>
+      <div class="arr-arrow">→</div>
+      <div class="arr-cell">
+        <div class="role">Programmatic skill network</div>
+        <strong>Adaptive stabilization</strong>
+        <p style="margin: 0.25rem 0 0; color: var(--v3-muted); font-size: 0.9rem;">V(s) gates updates per skill</p>
+      </div>
+
+      <div class="arr-cell">
+        <div class="role">Neural network training</div>
+        <strong>Architecture search</strong>
+        <p style="margin: 0.25rem 0 0; color: var(--v3-muted); font-size: 0.9rem;">restructure topology to improve capacity</p>
+      </div>
+      <div class="arr-arrow">→</div>
+      <div class="arr-cell">
+        <div class="role">Programmatic skill network</div>
+        <strong>Structural refactoring</strong>
+        <p style="margin: 0.25rem 0 0; color: var(--v3-muted); font-size: 0.9rem;">merge, extract, prune skills under rollback</p>
+      </div>
+    </div>
+
+    <p class="lead" style="margin-top: 2rem; color: var(--v3-muted); font-size: 0.95rem;">
+      The analogy is partial (PSN works over discrete programs and binary success signals), but the
+      <em>algorithmic structure</em> of NN training transfers, and yields testable predictions
+      (see <a href="#reflect">§4 propagation depth</a>,
+      <a href="#gating">§5 retention &amp; oscillation</a>,
+      <a href="#refactor">§6 stair-step structural growth</a>).
+    </p>
+  </section>
+
+
+
+  <!-- ============================================================== -->
+  <!-- §4 REFLECT — symbolic credit assignment                         -->
+  <!-- ============================================================== -->
+  <section class="v3-section" id="reflect">
+    <span class="eyebrow">§4 REFLECT</span>
+    <h2>Symbolic credit assignment that behaves like backprop</h2>
+    <p class="lead">
+      When a multi-skill plan fails, the question isn't <em>which skill</em> was responsible:
+      backprop doesn't compute one gradient, it computes one <em>per parameter</em> along the
+      activation path. REFLECT does the symbolic analogue: it propagates failure feedback
+      recursively along the executed invocation trace, assigning a per-skill diagnostic to
+      <em>every</em> skill the trace visited.
+    </p>
+
+    <p>
+      <strong>Two phases.</strong> <strong>Phase I</strong> propagates feedback top-down
+      (like PyTorch's <code>loss.backward()</code>): for each visited skill, the parent's blame
+      decomposes into a local edit proposal (gradient) <code>g<sub>s</sub></code> plus
+      child feedback signals <code>{f<sub>s'</sub>}</code> that flow further down.
+      <strong>Phase II</strong> applies the per-skill edit, leaves first
+      (like <code>optimizer.step()</code>).
+    </p>
+
+    <div class="v3-chart-frame is-narrow">
+      <img src="static/images/charts/p_new1_reflect_depth.png" alt="REFLECT propagation depth: GPT-5-mini 2.7 vs Qwen3 5.0 mean skills per multi-skill failure." />
+      <p class="caption">
+        <strong>The prediction the analogy makes</strong>, and our data confirms.
+        If REFLECT really is chain-rule-like credit assignment with per-skill gradients, the
+        propagation depth should scale with how noisy the per-skill diagnosis is. A weaker
+        code-generator produces noisier per-skill blame, so the recursion travels deeper before
+        residual feedback drops below noise floor. <strong>GPT-5-mini converges in 2.7 reasoning
+        steps; Qwen3-Coder-Next needs 5.0 (about 2&times; deeper).</strong> A
+        heuristic-localization framing of REFLECT (one most-visible skill per call) doesn't
+        predict this scaling. Chain-rule does.
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ============================================================== -->
+  <!-- §5 MATURITY GATING                                              -->
+  <!-- ============================================================== -->
+  <section class="v3-section" id="gating">
+    <span class="eyebrow">§5 Maturity gating</span>
+    <h2>Adaptive learning rates for skills</h2>
+    <p class="lead">
+      Once a skill has converged, additional edit on it can be risky since REFLECT's
+      gradient is itself noisy (see <a href="#noise">§7</a>). Downstream failure can
+      backprop up the call chain and "fix" a working ancestor into breaking. PSN closes
+      this trap with <strong>per-skill update probabilities</strong>, a
+      <em>learning-rate schedule</em> that freezes mature skills while keeping immature
+      ones plastic.
+    </p>
+
+    <p>
+      Each skill carries a reliability score, a smoothed success rate adjusted by how
+      uncertain we are about it. Mature skills (high reliability) get chosen for update
+      only rarely; immature ones are updated almost every call.
+    </p>
+
+    <div class="v3-perf-grid">
+      <div class="v3-perf-figure">
+        <img src="static/images/ablations/maturity_gating.png" alt="Cumulative success rate with vs without maturity gating: gating yields stable upward trajectory."/>
+        <p class="caption">
+          <strong>The prediction the analogy makes.</strong> If gating freezes converged skills,
+          removing it should produce cumulative-SR oscillation when downstream failures perturb
+          mature skills. Without gating (orange), the curve dips when a new harder task arrives.
+          With gating (blue), mature skills stop receiving updates, the curve climbs and stays
+          climbed.
+        </p>
+      </div>
+      <div class="v3-perf-figure">
+        <img src="static/images/ablations/skill_retention.png" alt="Skill retention rate by milestone: PSN preserves 50–100%; Voyager catastrophic forgetting to 0%."/>
+        <p class="caption">
+          <strong>Catastrophic forgetting in flat libraries.</strong> Re-evaluated after each
+          new task, mature skills retain function (50–100%) under PSN; Voyager's flat library
+          degrades to zero on diamond pickaxe. Stability without sacrificing plasticity.
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================== -->
+  <!-- §6 ONLINE REFACTOR                                              -->
+  <!-- ============================================================== -->
+  <section class="v3-section" id="refactor">
+    <span class="eyebrow">§6 Online refactor</span>
+    <h2>Symbolic architecture search under a trust region</h2>
+    <p class="lead">
+      As the agent learns, the network accumulates redundancies: <strong>duplicates</strong>,
+      <strong>overlapping coverage</strong>, and <strong>missing abstractions</strong>.
+      PSN restructures it through five canonical rewrite cases. But a rewrite that looks
+      safe at the surface (a merge of two seemingly-identical siblings, a parameter
+      generalization across cases) can silently change behavior, so every proposal
+      passes through a <em>two-stage</em> safety gate before it touches the network.
+    </p>
+
+    <div class="v3-carousel" id="refactor-carousel">
+      <div class="v3-carousel-tabs">
+        <button data-case="0" class="is-active">① Common subskill extraction</button>
+        <button data-case="1">② Behavioral coverage</button>
+        <button data-case="2">③ Parametric coverage</button>
+        <button data-case="3">④ Sibling specializations</button>
+        <button data-case="4">⑤ Duplication</button>
+      </div>
+      <div class="v3-carousel-stage">
+        <div class="v3-carousel-panel is-active" data-case="0">
+          <div class="case-figure"><img src="static/images/method/Common_Skill.png" alt="Common subskill extraction" /></div>
+          <div class="case-text">
+            <h4>Common subskill extraction</h4>
+            <p>Two skills share an overlapping sub-operation → extract a shared parent skill; both call it. The shared sub-operation is now a reusable building block.</p>
+          </div>
+        </div>
+        <div class="v3-carousel-panel" data-case="1">
+          <div class="case-figure"><img src="static/images/method/Subgraph_Coverage.png" alt="Behavioral coverage" /></div>
+          <div class="case-text">
+            <h4>Behavioral coverage</h4>
+            <p>A composite skill duplicates the logic of an existing subskill → rewire to call it. Duplicated blocks are replaced with calls to existing skills.</p>
+          </div>
+        </div>
+        <div class="v3-carousel-panel" data-case="2">
+          <div class="case-figure"><img src="static/images/method/Parametric_Coverage.png" alt="Parametric coverage" /></div>
+          <div class="case-text">
+            <h4>Parametric coverage</h4>
+            <p>One skill is a strict specialization of another (e.g. <code>mineOakLogs(num)</code> ⊂ <code>mineLogs(OAK, num)</code>) → absorb into a parameterized parent.</p>
+          </div>
+        </div>
+        <div class="v3-carousel-panel" data-case="3">
+          <div class="case-figure"><img src="static/images/method/Sibling_Specializations.png" alt="Sibling specializations" /></div>
+          <div class="case-text">
+            <h4>Sibling specializations</h4>
+            <p>Multiple sibling skills imply a missing abstraction → introduce a shared parent and rewrite each sibling as a thin wrapper.</p>
+          </div>
+        </div>
+        <div class="v3-carousel-panel" data-case="4">
+          <div class="case-figure"><img src="static/images/method/Duplication.png" alt="Duplication" /></div>
+          <div class="case-text">
+            <h4>Duplication</h4>
+            <p>Two skills are functionally identical up to naming → canonical merge plus link rewire.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 2rem;">A two-stage trust region</h3>
+    <p>
+      Every refactor proposal flows through two gates:
+    </p>
+    <ul>
+      <li><strong>Stage 1 — Pre-validation.</strong> Syntax / type / semantic-preservation checks reject malformed proposals before any refactor is committed. <span class="v3-emph">~28%</span> of refactor proposals are rejected here, before they ever touch the network.</li>
+      <li><strong>Stage 2 — Post-application rollback.</strong> If the refactor degrades the next 3 tasks by more than 20%, the change is reverted via a logged inverse operation.</li>
+    </ul>
+
+    <div class="v3-chart-frame v3-rstruct-frame">
+      <img src="static/images/charts/r_struct_trajectory.png" alt="R_struct trajectory: GPT-5-mini v13 hero run jumps from 0 to 0.44 by iter 5 and peaks ~0.52 at iter 17; Qwen3 grows in stair-steps." />
+      <p class="caption">
+        <strong>The prediction the analogy makes.</strong> If refactor really is the architectural
+        mechanism, R_struct should rise in <em>stair-stepped jumps</em> after refactor events, not
+        smoothly.
+      </p>
+    </div>
+  </section>
+
+
+
+  <!-- ============================================================== -->
+  <!-- §7 NOISE                                                        -->
+  <!-- ============================================================== -->
+  <section class="v3-section is-wide" id="noise">
+    <span class="eyebrow">§7 Harnessing the vulnerability of REFLECT</span>
+    <h2>An LLM-powered gradient is a noisy gradient</h2>
+    <p class="lead">
+      Unlike a calculus-defined gradient, REFLECT's gradient is an LLM output: <em>noisy
+      by construction</em>. The architectural question isn't how to make it noise-free
+      (it can't be), but how the surrounding system makes REFLECT-driven learning
+      <em>converge despite that noise</em>.
+    </p>
+
+    <h3>Why is REFLECT noisy? Three layers.</h3>
+    <div class="v3-noise-grid">
+      <div class="v3-noise-card">
+        <div class="layer-tag">Knowledge layer</div>
+        <h4>Parametric world-knowledge errors</h4>
+        <p>The LLM's world-knowledge fails in three ways: it may be <strong>absent</strong> (the fact never made it into the pretraining corpus), <strong>un-recalled</strong> (the fact is in the weights but the prompt fails to surface it), or <strong>hallucinated</strong> (the LLM confidently generates a plausible-sounding but false fact).</p>
+        <div class="quote">"raw_iron doesn't exist in vanilla Minecraft — iron_ore drops iron_ingot only after smelting in a furnace." — Qwen3</div>
+        <p>The <code>raw_iron</code> block has been in vanilla MC since version 1.17 (well before Qwen3's pretraining cutoff). The model has the data but confidently denies it: un-recalled + hallucinated.</p>
+        <p class="fix"><strong>PSN's fix: knowledge-augmented REFLECT.</strong> A small Minecraft-fact knowledge index is retrieved into Phase I REFLECT's prompt. Verified facts in context bypass all three modes at once: no recall needed, concrete claims to override hallucinations, and missing knowledge supplied. This is a knowledge-side mitigation, not architectural: REFLECT's structure doesn't change, we just feed it better context.</p>
+      </div>
+      <div class="v3-noise-card">
+        <div class="layer-tag">Reasoning layer</div>
+        <h4>Spurious causal attribution</h4>
+        <p>The LLM's causal reasoning fails in three ways: it may <strong>anchor on salience</strong> (latching onto the most prominent context item as the cause), <strong>fabricate plausibility</strong> (constructing a coherent-sounding story without grounding it in evidence), or operate from a <strong>signal-starved trace</strong> (the env didn't surface the actual cause clearly enough to reason from).</p>
+        <div class="quote">"The mined obsidian falls into adjacent lava and is destroyed." — Qwen3, on a tier-mismatch failure where the actual cause was iron_pickaxe ≠ obsidian</div>
+        <p>Qwen3 anchored on the salient cue (lava) and fabricated a physics-sounding story to bridge the gap: anchor + fabricate + starved trace.</p>
+        <p class="fix"><strong>PSN's fix: env-validated iteration.</strong> We don't try to make individual REFLECT calls reason correctly. PSN accepts noisy reasoning and relies on the iteration loop: each candidate skill re-executes in real Minecraft, correct optimizations survive the effect check, noisy reasoning gets filtered by the next iteration's fresh env feedback. Reasoning-layer noise tolerance is architectural at the <em>loop</em> level, not at the per-REFLECT level.</p>
+      </div>
+      <div class="v3-noise-card">
+        <div class="layer-tag">Interface layer</div>
+        <h4>Tool / API hallucination</h4>
+        <p>The LLM's code-generation interface fails in three ways: it may <strong>fabricate APIs</strong> (referencing functions that don't exist), <strong>misuse contracts</strong> (calling real APIs with wrong argument shapes, e.g., string vs id list, missing required parameters), or <strong>mimic surface patterns</strong> (copying syntactic patterns from prompt examples without synthesizing actual gameplay logic).</p>
+        <div class="quote">"<code>bot.chat('/give bot diamond 3')</code>" — Qwen3, copied verbatim from a curriculum example instead of synthesizing gameplay</div>
+        <p><code>bot.chat</code> is a real API and the call signature is correct, so this is pure surface mimicry from a curriculum example that included the <code>/give</code> chat-command pattern.</p>
+        <p class="fix"><strong>PSN's fix: static validation + cleaned context.</strong> A static reference checker (Babel parse + symbol resolution) catches fabricated APIs before execution; API-contract docs in the action-agent prompt teach correct call shapes; curriculum prompts are cleaned of cheat-command patterns to remove the mimicry templates. In a production-prompt replay study (n=20), the bug rate dropped from <span class="v3-num">65% → 35%</span>. The reference-checker is architectural (pre-execution gate); the rest is context shaping.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 2.4rem;">How does PSN solve each? Two complementary defenses.</h3>
+    <p>
+      <strong>Framework-level — env-validated iteration.</strong> We <em>accept</em> noise; the
+      env filters it. The skill update rule is <code>s<sub>i+1</sub> = s<sub>i</sub> + δs<sub>i</sub></code>
+      where <code>δs<sub>i</sub> = REFLECT(s<sub>i</sub>, env_feedback<sub>i</sub>)</code>. Each
+      <code>s<sub>i</sub></code> re-executes in real Minecraft; correct optimizations survive
+      (they pass the effect check), noise is filtered (failed executions feed the next REFLECT),
+      and the loop converges when <code>s<sub>i</sub></code> solves the task. <em>Noise tolerance
+      comes from the iterative loop, not from individual REFLECT calls being trustworthy.</em>
+    </p>
+    <p>
+      <strong>Layer-targeted assists.</strong> Where possible, PSN gives REFLECT layer-specific
+      help so the loop has less work to do: better facts (Knowledge layer, knowledge-augmented
+      REFLECT), explicit API contracts and cleaned curriculum context (Interface layer, context
+      shaping), and a pre-execution validation gate for fabricated APIs (Interface layer,
+      architectural). Reasoning has no skill-structure-level assist, its noise tolerance comes
+      entirely from the framework-level loop above.
+    </p>
+
+    <div class="v3-chart-frame">
+      <img src="static/images/charts/noise_layers_with_without.png" alt="Per-noise-layer diagnostic accuracy with and without PSN's mechanism, broken down by LLM." />
+      <p class="caption">
+        Most striking: <strong>Knowledge layer</strong> +33pp on Qwen3, only +2pp on
+        GPT-5-mini: the fix is a <em>weak-LLM corrigendum</em>, not architectural.
+        <strong>Interface-layer</strong> validation is architectural and applies across LLMs
+        (production-prompt replay bug rate 65% → 35%).
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ============================================================== -->
+  <!-- §8 R_struct — Compositional reuse                              -->
+  <!-- ============================================================== -->
+  <section class="v3-section" id="reuse">
+    <span class="eyebrow">§8 Compositional reuse</span>
+    <h2>From primitives to reuse hubs</h2>
+    <p class="lead">
+      A skill library that grows but is never <em>reused</em> is a code dump, not a learning
+      system. Library size matters, but the more telling metric is how many skills get reused.
+    </p>
+    <p>
+      <strong>R<sub>struct</sub></strong> = fraction of skills with fan-in &gt; 1. Rises from 0
+      (every skill a leaf) toward an asymptote where most skills are reused by multiple
+      parents. Across 6 Qwen3 runs, R<sub>struct</sub> reaches <span class="v3-num">≈ 0.094 ± 0.045</span>;
+      on GPT-5-mini, paper-side runs reach <span class="v3-num">≈ 0.4</span>.
+    </p>
+    <p>
+      Three observables consistently point at LLM strength as the underlying axis:
+      REFLECT depth (<span class="v3-num">2.7 vs 5.0</span> in §4), hallucination rate
+      (<span class="v3-num">0% vs 33%</span> in §7), R<sub>struct</sub> asymptote
+      (<span class="v3-num">0.4 vs 0.094</span> here). <em>Weaker LLM → noisier REFLECT →
+      flatter network.</em> The architecture absorbs as much as it can; the rest leaves
+      a measurable imprint on the topology.
+    </p>
+
+    <div class="chart-toggle" data-toggle-group="reuse-top10">
+      <button data-target="struct" class="is-active">Structural fan-in</button>
+      <button data-target="exec">Execution count</button>
+    </div>
+
+    <div class="chart-variants" data-variants="reuse-top10">
+      <div class="chart-variant is-active" data-variant="struct">
+        <div class="v3-chart-frame">
+          <img src="static/images/charts/v13_hero_top_reused.png" alt="Top-10 most-reused skills by structural fan-in: setupCraftingTable (9), ensureResource (8), waitForInventorySync (5), craftBirchPlanks (5), craftCraftingTable (5), generalCraftTool (4), craftFurnace (4), smeltIngots (4), provideInventoryHelpers (4), getMcDataAndHelpers (3)." />
+          <p class="caption">
+            <strong>Structural reuse.</strong> The run grows a <strong>hub-and-spoke
+            topology</strong>: a few setup/utility skills (<code>setupCraftingTable</code>,
+            <code>ensureResource</code>) become repeat-use hubs depended on by 8–9 other learned
+            skills. This is the static graph property: how many skills <em>could</em> reuse a
+            given one.
+          </p>
+        </div>
+      </div>
+      <div class="chart-variant" data-variant="exec">
+        <div class="v3-chart-frame">
+          <img src="static/images/charts/v13_hero_top_executed.png" alt="Top-10 most-reused skills by execution count during the run." />
+          <p class="caption">
+            <strong>Execution reuse.</strong> How often each skill was actually invoked during
+            the run. Structural reuse and execution reuse don't perfectly align: some
+            high-fan-in skills are rarely called; some are heavily called even with modest
+            fan-in. Both views matter: the first is architectural reusability, the second is
+            operational reuse.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h3>The library landscape — a controlled comparison</h3>
+    <p>
+      PSN's library grows hubs autonomously, even on the same LLM
+      (Qwen3-Coder-Next-FP8) and the same task curriculum. The chart below shows the
+      per-run fan-in distribution averaged across 6 paired runs each.
+    </p>
+
+    <div class="v3-chart-frame">
+      <img src="static/images/charts/fan_in_distribution_comparison.png" alt="Fan-in distribution PSN-Qwen3-6runs vs Voyager-Qwen3-6runs: PSN has mass at fan-in≥1; Voyager has all mass at fan-in=0." />
+      <p class="caption">
+        Average per-run distribution of skill fan-in across 6 paired runs each. PSN
+        consistently produces <strong>~7 skills per run with fan-in ≥ 1</strong> (some reaching
+        fan-in 3+); Voyager's library has every skill at fan-in 0 by architectural constraint.
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ============================================================== -->
+  <!-- §9 PERFORMANCE                                                 -->
+  <!-- ============================================================== -->
+  <section class="v3-section is-wide" id="performance">
+    <span class="eyebrow">§9 End-to-end performance</span>
+    <h2>PSN masters the tech tree faster and more reliably</h2>
+
+    <div class="llm-toggle" data-toggle-group="techtree">
+      <span class="label-prefix">LLM</span>
+      <button data-target="g" class="is-active">GPT-5-mini</button>
+      <button data-target="q">Qwen3-Coder-Next</button>
+    </div>
+
+    <div class="llm-variants" data-variants="techtree">
+      <div class="llm-variant is-active" data-variant="g">
+        <div class="v3-perf-grid">
+          <div class="v3-perf-figure">
+            <img src="static/images/results/gpt5mini/tech_tree.png" alt="Tech tree mastery on GPT-5-mini: PSN reaches diamond pickaxe in 32±10 iter; Voyager 2/6."/>
+            <p class="caption">
+              <strong>GPT-5-mini.</strong> PSN unlocks the diamond tools in
+              <span class="v3-num">32 ± 10 iterations across 6/6 runs</span>;
+              Voyager 2/6.
+            </p>
+          </div>
+          <div class="v3-perf-figure">
+            <img src="static/images/results/cumulative_reward.png" alt="Crafter cumulative reward across baselines."/>
+            <p class="caption">
+              <strong>Crafter cumulative reward.</strong> PSN sustains higher reward than
+              Voyager (~12 vs ~8) and dominates planning-only baselines (ReAct, Reflexion).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="llm-variant" data-variant="q">
+        <div class="v3-perf-grid">
+          <div class="v3-perf-figure">
+            <img src="static/images/results/qwen3/tech_tree.png" alt="Tech tree mastery on Qwen3-Coder-Next, 6 runs each method."/>
+            <p class="caption">
+              <strong>Qwen3-Coder-Next-FP8</strong> (3B active / 80B total MoE, 6×6 evaluation).
+              PSN reaches the diamond tools in <span class="v3-num">44 ± 13 iterations
+              across 6/6 runs</span>; Voyager 1/6.
+            </p>
+          </div>
+          <div class="v3-perf-figure">
+            <img src="static/images/ablations/skill_retention.png" alt="Skill retention rate by milestone, PSN vs Voyager." />
+            <p class="caption">
+              <strong>Skill retention.</strong> PSN preserves earlier skills near 100%; Voyager's
+              flat library decays from 86% to 0% across the tech tree.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ============================================================== -->
+  <!-- §10 EXPLORE                                                     -->
+  <!-- ============================================================== -->
+  <section class="skill-graph-section" id="explore">
+    <header class="section-title">
+      <span class="section-num">§10</span>
+      <h2>Explore a learned skill network</h2>
+    </header>
+    <p>
+      A real PSN run on GPT-5-mini. Each node is a JavaScript skill; edges are
+      parent → child reuse links; node color encodes <em>norm V</em>.
+      Low-norm-V nodes are skills whose uncertainty term still exceeds estimated
+      success, i.e., legitimate <em>plastic</em> skills. Click any node for code,
+      optimization history, preconditions, and effects.
+    </p>
+
+    <div class="skill-graph-frame">
+      <div class="skill-graph-canvas">
+        <div class="skill-graph-controls">
+          <button class="is-reset" id="sg-reset">Reset view</button>
+          <button data-skill="setupCraftingTable">setupCraftingTable</button>
+          <button data-skill="ensureResource">ensureResource</button>
+          <button data-skill="craftDiamondPickaxe">craftDiamondPickaxe</button>
+        </div>
+        <div id="skill-graph-container" role="img" aria-label="Interactive skill graph"></div>
+        <div class="vs-legend">
+          <span class="vs-legend-label">low norm V</span>
+          <span class="vs-legend-bar"></span>
+          <span class="vs-legend-label">high norm V</span>
+        </div>
+      </div>
+      <div id="skill-graph-panel"></div>
+    </div>
+    <p id="skill-graph-status">Loading skill graph data&hellip;</p>
+  </section>
+
+
+  <!-- ============================================================== -->
+  <!-- Footer / Citation                                               -->
+  <!-- ============================================================== -->
+  <footer class="v3-footer" id="bibtex">
+    <p style="margin: 0 0 0.3rem; color: var(--v3-muted);">If this work is useful, please cite:</p>
+    <pre class="bibtex"><button class="copy-btn" onclick="copyBibtex()">Copy</button><code id="bibtex-content">@article{shi2026psn,
+  title         = {Evolving Programmatic Skill Networks},
+  author        = {Shi, Haochen and Yuan, Xingdi and Liu, Bang},
+  journal       = {arXiv preprint arXiv:2601.03509},
+  year          = {2026},
+  eprint        = {2601.03509},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI}
+}</code></pre>
+    <p style="margin: 1rem 0 0; font-size: 0.88rem; color: var(--v3-muted);">
+      <a href="https://arxiv.org/abs/2601.03509" target="_blank" rel="noopener">arXiv</a> &middot;
+      Code · coming soon
+    </p>
+  </footer>
+
+
+  <!-- ========== JS ========== -->
+  <script src="static/js/cytoscape.min.js" defer></script>
+  <script src="static/js/highlight.min.js" defer></script>
+  <script src="static/js/skill_graph_viewer.js" defer></script>
+  <script src="static/js/llm_toggle.js" defer></script>
+  <script src="static/js/chart_toggle.js" defer></script>
+
+  <script>
+    // Refactor-case carousel
+    document.addEventListener("DOMContentLoaded", () => {
+      const root = document.getElementById("refactor-carousel");
+      if (!root) return;
+      const tabs = root.querySelectorAll(".v3-carousel-tabs button");
+      const panels = root.querySelectorAll(".v3-carousel-panel");
+      tabs.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const idx = btn.getAttribute("data-case");
+          tabs.forEach(b => b.classList.toggle("is-active", b === btn));
+          panels.forEach(p => p.classList.toggle("is-active",
+            p.getAttribute("data-case") === idx));
+        });
+      });
+    });
+
+    // (hero is now a static image link; iframe removed)
+
+    function copyBibtex() {
+      const text = document.getElementById('bibtex-content').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector('.bibtex .copy-btn');
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = orig; }, 1500);
+      });
+    }
+  </script>
+</body>
+</html>

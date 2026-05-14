@@ -1,0 +1,104 @@
+/* PSN hero-video HUD overlay — inventory (bottom-left) + chat (bottom-right).
+ *
+ * Style is lifted verbatim from hero_preview_v2.html's `.mc-inventory` and
+ * `.mc-chat` rules so the standalone hero video matches the existing
+ * synced-3-panel preview's register: translucent dark glass + JetBrains
+ * Mono + orange counts/timestamps + colored item chips.
+ */
+
+.psn-hud-host {
+    position: relative;
+}
+
+/* Common base: same shape, font, glass effect for both panels */
+.mc-inventory, .mc-chat {
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+    color: white;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    background: rgba(20, 24, 30, 0.62);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    transition: opacity 0.2s;
+}
+
+/* Inventory pinned bottom-left */
+.mc-inventory {
+    left: 12px;
+    bottom: 60px;
+    padding: 6px 8px;
+    max-width: 60%;
+}
+
+/* Chat pinned bottom-right; flex-column with bottom-justify makes the
+ * newest line stick to the bottom (Minecraft-style), older lines scroll
+ * up. pointer-events:auto so users can wheel/drag inside the panel. */
+.mc-chat {
+    right: 12px;
+    bottom: 60px;
+    padding: 6px 10px;
+    max-width: 46%;
+    max-height: 60%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.mc-chat::-webkit-scrollbar { width: 6px; }
+.mc-chat::-webkit-scrollbar-track { background: transparent; }
+.mc-chat::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 3px;
+}
+
+.mc-inventory[hidden], .mc-chat[hidden] { display: none; }
+
+/* Inventory row: small colored chip + item name + ×count */
+.mc-inv-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+.mc-inv-icon {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border-radius: 2px;
+    vertical-align: middle;
+}
+.mc-inv-name { font-size: 10px; opacity: 0.85; }
+.mc-inv-count {
+    font-weight: 700;
+    color: #ffb464;          /* orange accent — matches existing palette */
+}
+.mc-inv-empty {
+    font-size: 10px;
+    opacity: 0.6;
+    font-style: italic;
+}
+
+/* Chat lines: tag-colored by event kind (skill / task / success / fail) */
+.mc-chat-line {
+    display: block;
+    line-height: 1.45;
+    font-size: 11px;
+    padding: 1px 0;
+    opacity: 0.9;
+}
+.mc-chat-line .ts {
+    color: #ffb464;
+    margin-right: 6px;
+    font-size: 10px;
+}
+.mc-chat-line.is-success { color: #b9d8b3; }
+.mc-chat-line.is-fail    { color: #d6918a; }
+.mc-chat-line.is-task    { color: #fff; font-weight: 600; }
+.mc-chat-line.is-skill   { color: #d2c0a4; }

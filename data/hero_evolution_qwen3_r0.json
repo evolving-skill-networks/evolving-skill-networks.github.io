@@ -1,0 +1,8397 @@
+{
+  "ckpt": "ckpt_psnv11_qwen3_fp8_r0",
+  "primitives": [
+    {
+      "name": "mineBlock",
+      "type": "primitive",
+      "cluster": "World interaction",
+      "color": "#7d4f4f"
+    },
+    {
+      "name": "placeItem",
+      "type": "primitive",
+      "cluster": "World interaction",
+      "color": "#7d4f4f"
+    },
+    {
+      "name": "useChest",
+      "type": "primitive",
+      "cluster": "World interaction",
+      "color": "#7d4f4f"
+    },
+    {
+      "name": "exploreUntil",
+      "type": "primitive",
+      "cluster": "World interaction",
+      "color": "#7d4f4f"
+    },
+    {
+      "name": "craftItem",
+      "type": "primitive",
+      "cluster": "Crafting / smelt",
+      "color": "#4f6e8a"
+    },
+    {
+      "name": "smeltItem",
+      "type": "primitive",
+      "cluster": "Crafting / smelt",
+      "color": "#4f6e8a"
+    },
+    {
+      "name": "killMob",
+      "type": "primitive",
+      "cluster": "Mob interaction",
+      "color": "#6b5b8a"
+    },
+    {
+      "name": "shoot",
+      "type": "primitive",
+      "cluster": "Mob interaction",
+      "color": "#6b5b8a"
+    },
+    {
+      "name": "waitForMobRemoved",
+      "type": "primitive",
+      "cluster": "Mob interaction",
+      "color": "#6b5b8a"
+    },
+    {
+      "name": "givePlacedItemBack",
+      "type": "primitive",
+      "cluster": "Inventory / utils",
+      "color": "#5b6770"
+    }
+  ],
+  "final_skills": [
+    {
+      "name": "craft2BirchPlanks",
+      "type": "skill",
+      "cluster": "Other",
+      "color": "#bababa",
+      "v": 0.1,
+      "total_executions": 3,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "craftItem"
+      ],
+      "calls_skills": [],
+      "first_iter": 17
+    },
+    {
+      "name": "craft2Sticks",
+      "type": "skill",
+      "cluster": "Other",
+      "color": "#bababa",
+      "v": 0.1726,
+      "total_executions": 2,
+      "total_success": 0,
+      "fan_in": 1,
+      "calls_primitives": [
+        "craftItem"
+      ],
+      "calls_skills": [],
+      "first_iter": 20
+    },
+    {
+      "name": "craftBirchCraftingTable",
+      "type": "skill",
+      "cluster": "Crafting primitives",
+      "color": "#5e8ec4",
+      "v": 0.1726,
+      "total_executions": 2,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "craftItem"
+      ],
+      "calls_skills": [
+        "ensureBirchLogs",
+        "placeCraftingTable"
+      ],
+      "first_iter": 1
+    },
+    {
+      "name": "craftDiamondPickaxe",
+      "type": "skill",
+      "cluster": "Composite tooling",
+      "color": "#3a5d8a",
+      "v": -0.0404,
+      "total_executions": 1,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "craftItem"
+      ],
+      "calls_skills": [
+        "placeCraftingTable"
+      ],
+      "first_iter": 46
+    },
+    {
+      "name": "craftDiamondSword",
+      "type": "skill",
+      "cluster": "Composite tooling",
+      "color": "#3a5d8a",
+      "v": -0.0404,
+      "total_executions": 1,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "placeItem",
+        "craftItem"
+      ],
+      "calls_skills": [],
+      "first_iter": 66
+    },
+    {
+      "name": "craftFurnace",
+      "type": "skill",
+      "cluster": "Other",
+      "color": "#bababa",
+      "v": 0.3,
+      "total_executions": 3,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "placeItem",
+        "craftItem"
+      ],
+      "calls_skills": [],
+      "first_iter": 27
+    },
+    {
+      "name": "craftIronPickaxe",
+      "type": "skill",
+      "cluster": "Other",
+      "color": "#bababa",
+      "v": -0.0404,
+      "total_executions": 1,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "placeItem",
+        "craftItem"
+      ],
+      "calls_skills": [],
+      "first_iter": 38
+    },
+    {
+      "name": "craftStonePickaxe",
+      "type": "skill",
+      "cluster": "Composite tooling",
+      "color": "#3a5d8a",
+      "v": -0.0774,
+      "total_executions": 2,
+      "total_success": 0,
+      "fan_in": 1,
+      "calls_primitives": [
+        "craftItem"
+      ],
+      "calls_skills": [
+        "placeCraftingTable"
+      ],
+      "first_iter": 21
+    },
+    {
+      "name": "craftWoodenAxe",
+      "type": "skill",
+      "cluster": "Crafting primitives",
+      "color": "#5e8ec4",
+      "v": -0.1139,
+      "total_executions": 4,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "placeItem",
+        "craftItem"
+      ],
+      "calls_skills": [],
+      "first_iter": 5
+    },
+    {
+      "name": "craftWoodenPickaxe",
+      "type": "skill",
+      "cluster": "Crafting primitives",
+      "color": "#5e8ec4",
+      "v": -0.0404,
+      "total_executions": 1,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "placeItem",
+        "craftItem"
+      ],
+      "calls_skills": [
+        "craft2Sticks"
+      ],
+      "first_iter": 4
+    },
+    {
+      "name": "ensureBirchLogs",
+      "type": "skill",
+      "cluster": "Other",
+      "color": "#bababa",
+      "v": 0.306,
+      "total_executions": 5,
+      "total_success": 0,
+      "fan_in": 1,
+      "calls_primitives": [
+        "mineBlock"
+      ],
+      "calls_skills": [],
+      "first_iter": 0
+    },
+    {
+      "name": "ensureBucket",
+      "type": "skill",
+      "cluster": "Other",
+      "color": "#bababa",
+      "v": -0.0202,
+      "total_executions": 7,
+      "total_success": 0,
+      "fan_in": 2,
+      "calls_primitives": [
+        "mineBlock",
+        "placeItem",
+        "exploreUntil",
+        "craftItem",
+        "smeltItem"
+      ],
+      "calls_skills": [],
+      "first_iter": 71
+    },
+    {
+      "name": "ensureCobblestone",
+      "type": "skill",
+      "cluster": "Resource gathering",
+      "color": "#d97757",
+      "v": 0.497,
+      "total_executions": 6,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "mineBlock",
+        "exploreUntil"
+      ],
+      "calls_skills": [],
+      "first_iter": 12
+    },
+    {
+      "name": "ensureDiamonds",
+      "type": "skill",
+      "cluster": "Resource gathering",
+      "color": "#d97757",
+      "v": 0.1,
+      "total_executions": 3,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "mineBlock",
+        "exploreUntil"
+      ],
+      "calls_skills": [],
+      "first_iter": 43
+    },
+    {
+      "name": "ensureGoldIngot",
+      "type": "skill",
+      "cluster": "Other",
+      "color": "#bababa",
+      "v": -0.0404,
+      "total_executions": 1,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "placeItem",
+        "smeltItem"
+      ],
+      "calls_skills": [
+        "ensureBucket"
+      ],
+      "first_iter": 56
+    },
+    {
+      "name": "ensureLapisLazuli",
+      "type": "skill",
+      "cluster": "Resource gathering",
+      "color": "#d97757",
+      "v": 0.3,
+      "total_executions": 3,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "mineBlock",
+        "exploreUntil"
+      ],
+      "calls_skills": [],
+      "first_iter": 47
+    },
+    {
+      "name": "ensureRawGold",
+      "type": "skill",
+      "cluster": "Other",
+      "color": "#bababa",
+      "v": -0.0404,
+      "total_executions": 1,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "mineBlock",
+        "exploreUntil"
+      ],
+      "calls_skills": [],
+      "first_iter": 55
+    },
+    {
+      "name": "ensureRawIron",
+      "type": "skill",
+      "cluster": "Resource gathering",
+      "color": "#d97757",
+      "v": -0.1,
+      "total_executions": 3,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "mineBlock",
+        "exploreUntil"
+      ],
+      "calls_skills": [
+        "craftStonePickaxe"
+      ],
+      "first_iter": 24
+    },
+    {
+      "name": "mine4CoalOre",
+      "type": "skill",
+      "cluster": "Other",
+      "color": "#bababa",
+      "v": -0.0774,
+      "total_executions": 2,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "mineBlock",
+        "exploreUntil"
+      ],
+      "calls_skills": [
+        "craftWoodenPickaxe"
+      ],
+      "first_iter": 34
+    },
+    {
+      "name": "mineCoalOre",
+      "type": "skill",
+      "cluster": "Other",
+      "color": "#bababa",
+      "v": -0.3,
+      "total_executions": 3,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "mineBlock"
+      ],
+      "calls_skills": [],
+      "first_iter": 34
+    },
+    {
+      "name": "mineDeepslateGoldAndEnsureGoldIngots",
+      "type": "skill",
+      "cluster": "Other",
+      "color": "#bababa",
+      "v": -0.1,
+      "total_executions": 3,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "mineBlock",
+        "placeItem",
+        "exploreUntil"
+      ],
+      "calls_skills": [
+        "mineDeepslateGoldAndEnsureGoldIngotsDelta"
+      ],
+      "first_iter": 57
+    },
+    {
+      "name": "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+      "type": "skill",
+      "cluster": "Other",
+      "color": "#bababa",
+      "v": -0.3738,
+      "total_executions": 1,
+      "total_success": 0,
+      "fan_in": 1,
+      "calls_primitives": [
+        "mineBlock",
+        "placeItem",
+        "exploreUntil",
+        "craftItem"
+      ],
+      "calls_skills": [
+        "placeCraftingTable"
+      ],
+      "first_iter": 57
+    },
+    {
+      "name": "mineDeepslateLapisOreAndEnsure24",
+      "type": "skill",
+      "cluster": "Other",
+      "color": "#bababa",
+      "v": -0.0774,
+      "total_executions": 2,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "mineBlock",
+        "exploreUntil"
+      ],
+      "calls_skills": [],
+      "first_iter": 53
+    },
+    {
+      "name": "placeCraftingTable",
+      "type": "skill",
+      "cluster": "Other",
+      "color": "#bababa",
+      "v": -0.1,
+      "total_executions": 3,
+      "total_success": 0,
+      "fan_in": 4,
+      "calls_primitives": [
+        "placeItem",
+        "exploreUntil"
+      ],
+      "calls_skills": [],
+      "first_iter": 2
+    },
+    {
+      "name": "smeltIronIngots",
+      "type": "skill",
+      "cluster": "Other",
+      "color": "#bababa",
+      "v": -0.0404,
+      "total_executions": 1,
+      "total_success": 0,
+      "fan_in": 0,
+      "calls_primitives": [
+        "placeItem",
+        "smeltItem"
+      ],
+      "calls_skills": [
+        "ensureBucket"
+      ],
+      "first_iter": 37
+    }
+  ],
+  "n_final_skills": 25,
+  "n_final_edges": 10,
+  "frames": [
+    {
+      "iteration": 0,
+      "task": "Ensure you have 4 wood logs",
+      "success": true,
+      "active_skills": [
+        "ensureBirchLogs"
+      ],
+      "n_active_skills": 1,
+      "n_edges_skill_skill": 0,
+      "edges_skill_skill": [],
+      "edges_skill_primitive": [
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ]
+      ],
+      "objectives": {
+        "R_task": 1.0,
+        "R_reliab": 0.0,
+        "R_struct": 0.0,
+        "R_cons": 1.0,
+        "J": 0.5,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 1,
+      "task": "Craft 1 crafting table",
+      "success": true,
+      "active_skills": [
+        "craftBirchCraftingTable",
+        "ensureBirchLogs"
+      ],
+      "n_active_skills": 2,
+      "n_edges_skill_skill": 1,
+      "edges_skill_skill": [
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ]
+      ],
+      "objectives": {
+        "R_task": 1.0,
+        "R_reliab": 0.0,
+        "R_struct": 0.0,
+        "R_cons": 1.0,
+        "J": 0.5,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 2,
+      "task": "Place a crafting table nearby",
+      "success": true,
+      "active_skills": [
+        "craftBirchCraftingTable",
+        "ensureBirchLogs",
+        "placeCraftingTable"
+      ],
+      "n_active_skills": 3,
+      "n_edges_skill_skill": 2,
+      "edges_skill_skill": [
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ]
+      ],
+      "objectives": {
+        "R_task": 1.0,
+        "R_reliab": 0.0,
+        "R_struct": 0.0,
+        "R_cons": 1.0,
+        "J": 0.5,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 4,
+      "task": "Craft 1 wooden pickaxe",
+      "success": true,
+      "active_skills": [
+        "craftBirchCraftingTable",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "placeCraftingTable"
+      ],
+      "n_active_skills": 4,
+      "n_edges_skill_skill": 2,
+      "edges_skill_skill": [
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ]
+      ],
+      "objectives": {
+        "R_task": 1.0,
+        "R_reliab": 0.0,
+        "R_struct": 0.0,
+        "R_cons": 1.0,
+        "J": 0.5,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 5,
+      "task": "Craft 1 wooden axe",
+      "success": true,
+      "active_skills": [
+        "craftBirchCraftingTable",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "placeCraftingTable"
+      ],
+      "n_active_skills": 5,
+      "n_edges_skill_skill": 3,
+      "edges_skill_skill": [
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ]
+      ],
+      "objectives": {
+        "R_task": 1.0,
+        "R_reliab": 0.0,
+        "R_struct": 0.2,
+        "R_cons": 1.0,
+        "J": 0.54,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 9,
+      "task": "Ensure you have 26 wood logs",
+      "success": true,
+      "active_skills": [
+        "craftBirchCraftingTable",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "placeCraftingTable"
+      ],
+      "n_active_skills": 5,
+      "n_edges_skill_skill": 3,
+      "edges_skill_skill": [
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ]
+      ],
+      "objectives": {
+        "R_task": 1.0,
+        "R_reliab": 0.0439,
+        "R_struct": 0.2,
+        "R_cons": 1.0,
+        "J": 0.5532,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 12,
+      "task": "Ensure you have 3 cobblestone",
+      "success": true,
+      "active_skills": [
+        "craftBirchCraftingTable",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "placeCraftingTable"
+      ],
+      "n_active_skills": 6,
+      "n_edges_skill_skill": 3,
+      "edges_skill_skill": [
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ]
+      ],
+      "objectives": {
+        "R_task": 1.0,
+        "R_reliab": 0.0366,
+        "R_struct": 0.167,
+        "R_cons": 1.0,
+        "J": 0.5444,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 13,
+      "task": "Ensure you have 16 cobblestone",
+      "success": true,
+      "active_skills": [
+        "craftBirchCraftingTable",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "placeCraftingTable"
+      ],
+      "n_active_skills": 6,
+      "n_edges_skill_skill": 3,
+      "edges_skill_skill": [
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ]
+      ],
+      "objectives": {
+        "R_task": 1.0,
+        "R_reliab": 0.1114,
+        "R_struct": 0.167,
+        "R_cons": 1.0,
+        "J": 0.5668,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 17,
+      "task": "Craft 2 birch planks",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craftBirchCraftingTable",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "placeCraftingTable"
+      ],
+      "n_active_skills": 7,
+      "n_edges_skill_skill": 3,
+      "edges_skill_skill": [
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ]
+      ],
+      "objectives": {
+        "R_task": 1.0,
+        "R_reliab": 0.0955,
+        "R_struct": 0.143,
+        "R_cons": 1.0,
+        "J": 0.5573,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 20,
+      "task": "Craft 2 stick",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "placeCraftingTable"
+      ],
+      "n_active_skills": 8,
+      "n_edges_skill_skill": 4,
+      "edges_skill_skill": [
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ]
+      ],
+      "objectives": {
+        "R_task": 1.0,
+        "R_reliab": 0.0835,
+        "R_struct": 0.125,
+        "R_cons": 1.0,
+        "J": 0.5501,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 21,
+      "task": "Craft 1 stone pickaxe",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "placeCraftingTable"
+      ],
+      "n_active_skills": 9,
+      "n_edges_skill_skill": 5,
+      "edges_skill_skill": [
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ]
+      ],
+      "objectives": {
+        "R_task": 1.0,
+        "R_reliab": 0.0743,
+        "R_struct": 0.111,
+        "R_cons": 1.0,
+        "J": 0.5445,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 23,
+      "task": "Ensure you have 16 cobblestone",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "placeCraftingTable"
+      ],
+      "n_active_skills": 9,
+      "n_edges_skill_skill": 5,
+      "edges_skill_skill": [
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ]
+      ],
+      "objectives": {
+        "R_task": 1.0,
+        "R_reliab": 0.0796,
+        "R_struct": 0.111,
+        "R_cons": 1.0,
+        "J": 0.5461,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 24,
+      "task": "Ensure you have 8 raw iron",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureRawIron",
+        "placeCraftingTable"
+      ],
+      "n_active_skills": 10,
+      "n_edges_skill_skill": 6,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ]
+      ],
+      "objectives": {
+        "R_task": 1.0,
+        "R_reliab": 0.0716,
+        "R_struct": 0.1,
+        "R_cons": 1.0,
+        "J": 0.5415,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 27,
+      "task": "Craft 1 furnace",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftFurnace",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureRawIron",
+        "placeCraftingTable"
+      ],
+      "n_active_skills": 11,
+      "n_edges_skill_skill": 6,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ]
+      ],
+      "objectives": {
+        "R_task": 1.0,
+        "R_reliab": 0.0651,
+        "R_struct": 0.091,
+        "R_cons": 1.0,
+        "J": 0.5377,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 28,
+      "task": "Smelt 3 iron ingot",
+      "success": false,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftFurnace",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureRawIron",
+        "placeCraftingTable"
+      ],
+      "n_active_skills": 11,
+      "n_edges_skill_skill": 6,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.9333,
+        "R_reliab": 0.0651,
+        "R_struct": 0.091,
+        "R_cons": 1.0,
+        "J": 0.5111,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 32,
+      "task": "Craft 1 furnace",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftFurnace",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureRawIron",
+        "placeCraftingTable"
+      ],
+      "n_active_skills": 11,
+      "n_edges_skill_skill": 6,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.9375,
+        "R_reliab": 0.0924,
+        "R_struct": 0.091,
+        "R_cons": 1.0,
+        "J": 0.5209,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 34,
+      "task": "Mine 4 coal ore",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftFurnace",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "placeCraftingTable"
+      ],
+      "n_active_skills": 13,
+      "n_edges_skill_skill": 6,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.9412,
+        "R_reliab": 0.0782,
+        "R_struct": 0.077,
+        "R_cons": 0.9286,
+        "J": 0.5082,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 37,
+      "task": "Smelt 3 iron ingot",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftFurnace",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 14,
+      "n_edges_skill_skill": 6,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.9444,
+        "R_reliab": 0.0726,
+        "R_struct": 0.071,
+        "R_cons": 0.9375,
+        "J": 0.5075,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 38,
+      "task": "Craft 1 iron pickaxe",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 15,
+      "n_edges_skill_skill": 6,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.9474,
+        "R_reliab": 0.0678,
+        "R_struct": 0.067,
+        "R_cons": 0.9412,
+        "J": 0.5068,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 39,
+      "task": "Ensure you have 3 diamond",
+      "success": false,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 15,
+      "n_edges_skill_skill": 6,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.9,
+        "R_reliab": 0.0678,
+        "R_struct": 0.067,
+        "R_cons": 0.9412,
+        "J": 0.4879,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 43,
+      "task": "Ensure you have 3 diamond",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 16,
+      "n_edges_skill_skill": 6,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.9,
+        "R_reliab": 0.0635,
+        "R_struct": 0.062,
+        "R_cons": 0.9412,
+        "J": 0.4856,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 45,
+      "task": "Craft 2 stick",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 16,
+      "n_edges_skill_skill": 6,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.9,
+        "R_reliab": 0.0806,
+        "R_struct": 0.062,
+        "R_cons": 0.9412,
+        "J": 0.4907,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 46,
+      "task": "Craft 1 diamond pickaxe",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 17,
+      "n_edges_skill_skill": 7,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.9,
+        "R_reliab": 0.0758,
+        "R_struct": 0.059,
+        "R_cons": 0.9444,
+        "J": 0.489,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 47,
+      "task": "Ensure you have 1 lapis lazuli",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureLapisLazuli",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 18,
+      "n_edges_skill_skill": 7,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.9,
+        "R_reliab": 0.0716,
+        "R_struct": 0.056,
+        "R_cons": 0.9444,
+        "J": 0.4871,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 48,
+      "task": "Ensure you have 24 lapis lazuli",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureLapisLazuli",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 18,
+      "n_edges_skill_skill": 7,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.9,
+        "R_reliab": 0.0812,
+        "R_struct": 0.056,
+        "R_cons": 0.9444,
+        "J": 0.49,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 49,
+      "task": "Mine deepslate_lapis_ore and ensure you have 24 lapis lazuli",
+      "success": false,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureLapisLazuli",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 18,
+      "n_edges_skill_skill": 7,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.85,
+        "R_reliab": 0.0883,
+        "R_struct": 0.056,
+        "R_cons": 0.9444,
+        "J": 0.4721,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 53,
+      "task": "Mine deepslate_lapis_ore and ensure you have 24 lapis lazuli",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureLapisLazuli",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 19,
+      "n_edges_skill_skill": 7,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.85,
+        "R_reliab": 0.0836,
+        "R_struct": 0.053,
+        "R_cons": 0.9444,
+        "J": 0.4701,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 55,
+      "task": "Ensure you have 8 raw gold",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 20,
+      "n_edges_skill_skill": 7,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.85,
+        "R_reliab": 0.0795,
+        "R_struct": 0.05,
+        "R_cons": 0.9444,
+        "J": 0.4683,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 56,
+      "task": "Ensure you have 8 gold ingot",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureGoldIngot",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 21,
+      "n_edges_skill_skill": 7,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureGoldIngot",
+          "placeItem"
+        ],
+        [
+          "ensureGoldIngot",
+          "smeltItem"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.85,
+        "R_reliab": 0.0757,
+        "R_struct": 0.048,
+        "R_cons": 0.95,
+        "J": 0.4673,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 57,
+      "task": "Mine deepslate_gold_ore and ensure you have 8 gold ingots",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureGoldIngot",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateGoldAndEnsureGoldIngots",
+        "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 23,
+      "n_edges_skill_skill": 8,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureGoldIngot",
+          "placeItem"
+        ],
+        [
+          "ensureGoldIngot",
+          "smeltItem"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "craftItem"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.85,
+        "R_reliab": 0.0691,
+        "R_struct": 0.043,
+        "R_cons": 0.9524,
+        "J": 0.4646,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 61,
+      "task": "Ensure you have 12 diamonds",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureGoldIngot",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateGoldAndEnsureGoldIngots",
+        "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 23,
+      "n_edges_skill_skill": 8,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureGoldIngot",
+          "placeItem"
+        ],
+        [
+          "ensureGoldIngot",
+          "smeltItem"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "craftItem"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.85,
+        "R_reliab": 0.0734,
+        "R_struct": 0.043,
+        "R_cons": 0.9524,
+        "J": 0.4659,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 62,
+      "task": "Craft 1 diamond sword",
+      "success": false,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureGoldIngot",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateGoldAndEnsureGoldIngots",
+        "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 23,
+      "n_edges_skill_skill": 8,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureGoldIngot",
+          "placeItem"
+        ],
+        [
+          "ensureGoldIngot",
+          "smeltItem"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "craftItem"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.8,
+        "R_reliab": 0.0734,
+        "R_struct": 0.043,
+        "R_cons": 0.9524,
+        "J": 0.4459,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 66,
+      "task": "Craft 1 diamond sword",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftDiamondSword",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureGoldIngot",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateGoldAndEnsureGoldIngots",
+        "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 24,
+      "n_edges_skill_skill": 8,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftDiamondSword",
+          "placeItem"
+        ],
+        [
+          "craftDiamondSword",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureGoldIngot",
+          "placeItem"
+        ],
+        [
+          "ensureGoldIngot",
+          "smeltItem"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "craftItem"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.8,
+        "R_reliab": 0.0704,
+        "R_struct": 0.042,
+        "R_cons": 0.9545,
+        "J": 0.445,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 67,
+      "task": "Smelt 1 iron ingot",
+      "success": false,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftDiamondSword",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureGoldIngot",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateGoldAndEnsureGoldIngots",
+        "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 24,
+      "n_edges_skill_skill": 8,
+      "edges_skill_skill": [
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftDiamondSword",
+          "placeItem"
+        ],
+        [
+          "craftDiamondSword",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureGoldIngot",
+          "placeItem"
+        ],
+        [
+          "ensureGoldIngot",
+          "smeltItem"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "craftItem"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.75,
+        "R_reliab": 0.0704,
+        "R_struct": 0.042,
+        "R_cons": 0.9545,
+        "J": 0.425,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 71,
+      "task": "Ensure you have 1 bucket",
+      "success": false,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftDiamondSword",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureBucket",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureGoldIngot",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateGoldAndEnsureGoldIngots",
+        "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 25,
+      "n_edges_skill_skill": 10,
+      "edges_skill_skill": [
+        [
+          "ensureGoldIngot",
+          "ensureBucket"
+        ],
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "smeltIronIngots",
+          "ensureBucket"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftDiamondSword",
+          "placeItem"
+        ],
+        [
+          "craftDiamondSword",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "placeItem"
+        ],
+        [
+          "ensureBucket",
+          "exploreUntil"
+        ],
+        [
+          "ensureBucket",
+          "craftItem"
+        ],
+        [
+          "ensureBucket",
+          "smeltItem"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureGoldIngot",
+          "placeItem"
+        ],
+        [
+          "ensureGoldIngot",
+          "smeltItem"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "craftItem"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.75,
+        "R_reliab": 0.0779,
+        "R_struct": 0.08,
+        "R_cons": 0.9583,
+        "J": 0.4352,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 75,
+      "task": "Ensure you have 1 bucket",
+      "success": true,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftDiamondSword",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureBucket",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureGoldIngot",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateGoldAndEnsureGoldIngots",
+        "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 25,
+      "n_edges_skill_skill": 10,
+      "edges_skill_skill": [
+        [
+          "ensureGoldIngot",
+          "ensureBucket"
+        ],
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "smeltIronIngots",
+          "ensureBucket"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftDiamondSword",
+          "placeItem"
+        ],
+        [
+          "craftDiamondSword",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "placeItem"
+        ],
+        [
+          "ensureBucket",
+          "exploreUntil"
+        ],
+        [
+          "ensureBucket",
+          "craftItem"
+        ],
+        [
+          "ensureBucket",
+          "smeltItem"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureGoldIngot",
+          "placeItem"
+        ],
+        [
+          "ensureGoldIngot",
+          "smeltItem"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "craftItem"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.75,
+        "R_reliab": 0.0779,
+        "R_struct": 0.08,
+        "R_cons": 0.9583,
+        "J": 0.4352,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 78,
+      "task": "Ensure you have 1 water bucket",
+      "success": false,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftDiamondSword",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureBucket",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureGoldIngot",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateGoldAndEnsureGoldIngots",
+        "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 25,
+      "n_edges_skill_skill": 10,
+      "edges_skill_skill": [
+        [
+          "ensureGoldIngot",
+          "ensureBucket"
+        ],
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "smeltIronIngots",
+          "ensureBucket"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftDiamondSword",
+          "placeItem"
+        ],
+        [
+          "craftDiamondSword",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "placeItem"
+        ],
+        [
+          "ensureBucket",
+          "exploreUntil"
+        ],
+        [
+          "ensureBucket",
+          "craftItem"
+        ],
+        [
+          "ensureBucket",
+          "smeltItem"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureGoldIngot",
+          "placeItem"
+        ],
+        [
+          "ensureGoldIngot",
+          "smeltItem"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "craftItem"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.7,
+        "R_reliab": 0.0779,
+        "R_struct": 0.08,
+        "R_cons": 0.9583,
+        "J": 0.4152,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 79,
+      "task": "Ensure you have 1 water bucket",
+      "success": false,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftDiamondSword",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureBucket",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureGoldIngot",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateGoldAndEnsureGoldIngots",
+        "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 25,
+      "n_edges_skill_skill": 10,
+      "edges_skill_skill": [
+        [
+          "ensureGoldIngot",
+          "ensureBucket"
+        ],
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "smeltIronIngots",
+          "ensureBucket"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftDiamondSword",
+          "placeItem"
+        ],
+        [
+          "craftDiamondSword",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "placeItem"
+        ],
+        [
+          "ensureBucket",
+          "exploreUntil"
+        ],
+        [
+          "ensureBucket",
+          "craftItem"
+        ],
+        [
+          "ensureBucket",
+          "smeltItem"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureGoldIngot",
+          "placeItem"
+        ],
+        [
+          "ensureGoldIngot",
+          "smeltItem"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "craftItem"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.65,
+        "R_reliab": 0.0779,
+        "R_struct": 0.08,
+        "R_cons": 0.9583,
+        "J": 0.3952,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 81,
+      "task": "Ensure you have 1 obsidian",
+      "success": false,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftDiamondSword",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureBucket",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureGoldIngot",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateGoldAndEnsureGoldIngots",
+        "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 25,
+      "n_edges_skill_skill": 10,
+      "edges_skill_skill": [
+        [
+          "ensureGoldIngot",
+          "ensureBucket"
+        ],
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "smeltIronIngots",
+          "ensureBucket"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftDiamondSword",
+          "placeItem"
+        ],
+        [
+          "craftDiamondSword",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "placeItem"
+        ],
+        [
+          "ensureBucket",
+          "exploreUntil"
+        ],
+        [
+          "ensureBucket",
+          "craftItem"
+        ],
+        [
+          "ensureBucket",
+          "smeltItem"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureGoldIngot",
+          "placeItem"
+        ],
+        [
+          "ensureGoldIngot",
+          "smeltItem"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "craftItem"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.6,
+        "R_reliab": 0.0779,
+        "R_struct": 0.08,
+        "R_cons": 0.9583,
+        "J": 0.3752,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 85,
+      "task": "Ensure you have 1 obsidian",
+      "success": false,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftDiamondSword",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureBucket",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureGoldIngot",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateGoldAndEnsureGoldIngots",
+        "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 25,
+      "n_edges_skill_skill": 10,
+      "edges_skill_skill": [
+        [
+          "ensureGoldIngot",
+          "ensureBucket"
+        ],
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "smeltIronIngots",
+          "ensureBucket"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftDiamondSword",
+          "placeItem"
+        ],
+        [
+          "craftDiamondSword",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "placeItem"
+        ],
+        [
+          "ensureBucket",
+          "exploreUntil"
+        ],
+        [
+          "ensureBucket",
+          "craftItem"
+        ],
+        [
+          "ensureBucket",
+          "smeltItem"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureGoldIngot",
+          "placeItem"
+        ],
+        [
+          "ensureGoldIngot",
+          "smeltItem"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "craftItem"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.6,
+        "R_reliab": 0.0779,
+        "R_struct": 0.08,
+        "R_cons": 0.9583,
+        "J": 0.3752,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 87,
+      "task": "Ensure you have 4 obsidian",
+      "success": false,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftDiamondSword",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureBucket",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureGoldIngot",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateGoldAndEnsureGoldIngots",
+        "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 25,
+      "n_edges_skill_skill": 10,
+      "edges_skill_skill": [
+        [
+          "ensureGoldIngot",
+          "ensureBucket"
+        ],
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "smeltIronIngots",
+          "ensureBucket"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftDiamondSword",
+          "placeItem"
+        ],
+        [
+          "craftDiamondSword",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "placeItem"
+        ],
+        [
+          "ensureBucket",
+          "exploreUntil"
+        ],
+        [
+          "ensureBucket",
+          "craftItem"
+        ],
+        [
+          "ensureBucket",
+          "smeltItem"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureGoldIngot",
+          "placeItem"
+        ],
+        [
+          "ensureGoldIngot",
+          "smeltItem"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "craftItem"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.55,
+        "R_reliab": 0.0779,
+        "R_struct": 0.08,
+        "R_cons": 0.9583,
+        "J": 0.3552,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 91,
+      "task": "Ensure you have 4 obsidian",
+      "success": false,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftDiamondSword",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureBucket",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureGoldIngot",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateGoldAndEnsureGoldIngots",
+        "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 25,
+      "n_edges_skill_skill": 10,
+      "edges_skill_skill": [
+        [
+          "ensureGoldIngot",
+          "ensureBucket"
+        ],
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "smeltIronIngots",
+          "ensureBucket"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftDiamondSword",
+          "placeItem"
+        ],
+        [
+          "craftDiamondSword",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "placeItem"
+        ],
+        [
+          "ensureBucket",
+          "exploreUntil"
+        ],
+        [
+          "ensureBucket",
+          "craftItem"
+        ],
+        [
+          "ensureBucket",
+          "smeltItem"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureGoldIngot",
+          "placeItem"
+        ],
+        [
+          "ensureGoldIngot",
+          "smeltItem"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "craftItem"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.5,
+        "R_reliab": 0.0779,
+        "R_struct": 0.08,
+        "R_cons": 0.9583,
+        "J": 0.3352,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 95,
+      "task": "Ensure you have 8 redstone",
+      "success": false,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftDiamondSword",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureBucket",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureGoldIngot",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateGoldAndEnsureGoldIngots",
+        "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 25,
+      "n_edges_skill_skill": 10,
+      "edges_skill_skill": [
+        [
+          "ensureGoldIngot",
+          "ensureBucket"
+        ],
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "smeltIronIngots",
+          "ensureBucket"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftDiamondSword",
+          "placeItem"
+        ],
+        [
+          "craftDiamondSword",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "placeItem"
+        ],
+        [
+          "ensureBucket",
+          "exploreUntil"
+        ],
+        [
+          "ensureBucket",
+          "craftItem"
+        ],
+        [
+          "ensureBucket",
+          "smeltItem"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureGoldIngot",
+          "placeItem"
+        ],
+        [
+          "ensureGoldIngot",
+          "smeltItem"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "craftItem"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.45,
+        "R_reliab": 0.0779,
+        "R_struct": 0.08,
+        "R_cons": 0.9583,
+        "J": 0.3152,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    },
+    {
+      "iteration": 99,
+      "task": "Ensure you have 8 redstone",
+      "success": false,
+      "active_skills": [
+        "craft2BirchPlanks",
+        "craft2Sticks",
+        "craftBirchCraftingTable",
+        "craftDiamondPickaxe",
+        "craftDiamondSword",
+        "craftFurnace",
+        "craftIronPickaxe",
+        "craftStonePickaxe",
+        "craftWoodenAxe",
+        "craftWoodenPickaxe",
+        "ensureBirchLogs",
+        "ensureBucket",
+        "ensureCobblestone",
+        "ensureDiamonds",
+        "ensureGoldIngot",
+        "ensureLapisLazuli",
+        "ensureRawGold",
+        "ensureRawIron",
+        "mine4CoalOre",
+        "mineCoalOre",
+        "mineDeepslateGoldAndEnsureGoldIngots",
+        "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+        "mineDeepslateLapisOreAndEnsure24",
+        "placeCraftingTable",
+        "smeltIronIngots"
+      ],
+      "n_active_skills": 25,
+      "n_edges_skill_skill": 10,
+      "edges_skill_skill": [
+        [
+          "ensureGoldIngot",
+          "ensureBucket"
+        ],
+        [
+          "ensureRawIron",
+          "craftStonePickaxe"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "placeCraftingTable"
+        ],
+        [
+          "smeltIronIngots",
+          "ensureBucket"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "placeCraftingTable"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craft2Sticks"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "ensureBirchLogs"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta"
+        ],
+        [
+          "craftStonePickaxe",
+          "placeCraftingTable"
+        ]
+      ],
+      "edges_skill_primitive": [
+        [
+          "craft2BirchPlanks",
+          "craftItem"
+        ],
+        [
+          "craft2Sticks",
+          "craftItem"
+        ],
+        [
+          "craftBirchCraftingTable",
+          "craftItem"
+        ],
+        [
+          "craftDiamondPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftDiamondSword",
+          "placeItem"
+        ],
+        [
+          "craftDiamondSword",
+          "craftItem"
+        ],
+        [
+          "craftFurnace",
+          "placeItem"
+        ],
+        [
+          "craftFurnace",
+          "craftItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftIronPickaxe",
+          "craftItem"
+        ],
+        [
+          "craftStonePickaxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenAxe",
+          "craftItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "placeItem"
+        ],
+        [
+          "craftWoodenPickaxe",
+          "craftItem"
+        ],
+        [
+          "ensureBirchLogs",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "mineBlock"
+        ],
+        [
+          "ensureBucket",
+          "placeItem"
+        ],
+        [
+          "ensureBucket",
+          "exploreUntil"
+        ],
+        [
+          "ensureBucket",
+          "craftItem"
+        ],
+        [
+          "ensureBucket",
+          "smeltItem"
+        ],
+        [
+          "ensureCobblestone",
+          "mineBlock"
+        ],
+        [
+          "ensureCobblestone",
+          "exploreUntil"
+        ],
+        [
+          "ensureDiamonds",
+          "mineBlock"
+        ],
+        [
+          "ensureDiamonds",
+          "exploreUntil"
+        ],
+        [
+          "ensureGoldIngot",
+          "placeItem"
+        ],
+        [
+          "ensureGoldIngot",
+          "smeltItem"
+        ],
+        [
+          "ensureLapisLazuli",
+          "mineBlock"
+        ],
+        [
+          "ensureLapisLazuli",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawGold",
+          "mineBlock"
+        ],
+        [
+          "ensureRawGold",
+          "exploreUntil"
+        ],
+        [
+          "ensureRawIron",
+          "mineBlock"
+        ],
+        [
+          "ensureRawIron",
+          "exploreUntil"
+        ],
+        [
+          "mine4CoalOre",
+          "mineBlock"
+        ],
+        [
+          "mine4CoalOre",
+          "exploreUntil"
+        ],
+        [
+          "mineCoalOre",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngots",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "placeItem"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "exploreUntil"
+        ],
+        [
+          "mineDeepslateGoldAndEnsureGoldIngotsDelta",
+          "craftItem"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "mineBlock"
+        ],
+        [
+          "mineDeepslateLapisOreAndEnsure24",
+          "exploreUntil"
+        ],
+        [
+          "placeCraftingTable",
+          "placeItem"
+        ],
+        [
+          "placeCraftingTable",
+          "exploreUntil"
+        ],
+        [
+          "smeltIronIngots",
+          "placeItem"
+        ],
+        [
+          "smeltIronIngots",
+          "smeltItem"
+        ]
+      ],
+      "objectives": {
+        "R_task": 0.4,
+        "R_reliab": 0.0779,
+        "R_struct": 0.08,
+        "R_cons": 0.9583,
+        "J": 0.2952,
+        "weights": [
+          0.4,
+          0.3,
+          0.2,
+          0.1
+        ]
+      },
+      "frame_url": null
+    }
+  ]
+}

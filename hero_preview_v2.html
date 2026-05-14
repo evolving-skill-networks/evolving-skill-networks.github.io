@@ -1,0 +1,2794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inside a PSN run</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root {
+      --bg: #fbf8f4;
+      --card: #ffffff;
+      --ink: #1f2933;
+      --muted: #5b6770;
+      --rule: #e6dfd5;
+      --orange: #d97757;
+      --deep-blue: #3a5d8a;
+      --light-blue: #5e8ec4;
+      --purple: #8b6bc4;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      margin: 0;
+      padding: 1.5rem 1.5rem 2.5rem;
+    }
+    h1 { font-size: 1.85rem; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 0.25rem 0; }
+    .subtitle { color: var(--muted); font-size: 1.0rem; margin: 0 0 1.4rem 0; }
+
+    .v2-frame {
+      max-width: 1380px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.04);
+      overflow: hidden;
+    }
+    .v2-row-top {
+      display: grid;
+      grid-template-columns: 480px 1fr;
+      gap: 0;
+    }
+
+    /* ===== Minecraft frame panel (left) ===== */
+    .mc-panel {
+      position: relative;
+      background: linear-gradient(180deg, #87ceeb 0%, #98d8e0 50%, #6b9b7a 100%);
+      min-height: 380px;
+      overflow: hidden;
+    }
+    .mc-panel-img {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-size: cover;
+      background-position: center;
+    }
+    .mc-panel-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+      display: none;
+      z-index: 1;
+      transition: opacity 320ms ease;
+      opacity: 1;
+    }
+    .mc-panel-video.is-active { display: block; }
+    .mc-panel-video.is-segfade { opacity: 0; }
+    .mc-panel-img.is-hidden    { opacity: 0; }
+    .mc-panel-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      padding: 0.7rem 0.9rem;
+      background: linear-gradient(180deg, rgba(31,41,51,0.85) 0%, rgba(31,41,51,0) 100%);
+      color: white;
+      z-index: 2;
+    }
+    .mc-panel-overlay .mc-iter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+      opacity: 0.85;
+      margin-bottom: 0.15rem;
+    }
+    .mc-panel-overlay .mc-task {
+      font-size: 0.92rem;
+      font-weight: 500;
+    }
+    /* Refactor-stage overlay: shown over the video during the
+       inter-iter refactor pause segments inserted by buildSegments().
+       Covers the whole .mc-panel area, freezes the video on its
+       previous-frame underneath, fades in/out smoothly. */
+    .mc-refactor-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 20, 30, 0.78);
+      color: #f5e9d8;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 4;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      padding: 1.4rem;
+    }
+    .mc-refactor-overlay.is-visible { opacity: 1; }
+    .mc-refactor-overlay .ro-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      opacity: 0.65;
+      margin-bottom: 0.55rem;
+    }
+    .mc-refactor-overlay .ro-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.55rem;
+    }
+    .mc-refactor-overlay .ro-line {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      margin: 0.18rem 0;
+      opacity: 0.95;
+    }
+    .mc-refactor-overlay .ro-type     { color: #c8b8a0; font-weight: 600; }
+    .mc-refactor-overlay .ro-skill    { color: #d97757; font-weight: 600; }
+    .mc-refactor-overlay .ro-source   { color: #a6c5e5; }
+    .mc-panel-banner {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 0.5rem 0.9rem;
+      background: rgba(31,41,51,0.78);
+      color: #eee;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .mc-panel-banner em { color: var(--orange); font-style: normal; }
+
+    /* ===== Graph panel (right) ===== */
+    .graph-panel {
+      position: relative;
+      border-left: 1px solid var(--rule);
+      background: var(--bg);
+    }
+    #graph-svg {
+      display: block;
+      width: 100%;
+      height: 380px;
+    }
+    .column-label-top {
+      font-size: 10.5px;
+      font-weight: 600;
+      fill: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    .node circle { stroke: #2c3338; stroke-width: 1.0; cursor: pointer; transition: stroke-width 0.15s, filter 0.15s; }
+    .node:hover circle { stroke-width: 2.2; filter: drop-shadow(0 0 4px rgba(0,0,0,0.25)); }
+    /* Skill-network fancy styling: halo + cored fill + drop shadow + label */
+    .node.skill .skill-halo {
+      stroke: none;
+      fill-opacity: 0.28;
+      pointer-events: none;
+      filter: blur(3.5px);
+      transition: fill-opacity 0.2s, r 0.2s;
+    }
+    .node.skill .skill-core {
+      stroke: rgba(255, 255, 255, 0.92);
+      stroke-width: 1.6;
+      filter: drop-shadow(0 1.5px 2.5px rgba(35, 45, 55, 0.28));
+      cursor: pointer;
+      transition: stroke-width 0.15s, filter 0.15s;
+    }
+    .node.skill:hover .skill-core {
+      stroke-width: 2.6;
+      filter: drop-shadow(0 2px 5px rgba(35, 45, 55, 0.42));
+    }
+    .node.skill:hover .skill-halo {
+      fill-opacity: 0.42;
+    }
+    .node.skill .skill-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 9px;
+      font-weight: 500;
+      fill: var(--ink);
+      text-anchor: middle;
+      pointer-events: none;
+      paint-order: stroke;
+      stroke: var(--bg);
+      stroke-width: 3px;
+      stroke-linejoin: round;
+    }
+    .edge { fill: none; pointer-events: none; }
+    .edge.skill-skill {
+      stroke: #5b6770;
+      stroke-width: 1.8;
+      stroke-opacity: 0.72;
+      stroke-linecap: round;
+    }
+    .edge.skill-primitive { stroke: #c8b8a0; stroke-width: 0.7; stroke-opacity: 0.55; stroke-dasharray: 3, 2; }
+    .edge.api-primitive { stroke: #b8a896; stroke-width: 0.65; stroke-dasharray: 2, 2; }
+    .column-divider { stroke: var(--rule); stroke-width: 1; stroke-dasharray: 4, 4; }
+    .skill-area-bg { fill: url(#skillBgGrad); }
+
+    /* ===== Active-state styling (current frame's active nodes / edges) =====
+       Inactive elements stay COLORED (no saturate filter) but at lower
+       group-level opacity (set in renderFrame()). Active ones gain glow
+       + thicker / brighter stroke. Berkeley HKN coursegraph style: the
+       full network is visible at all times so the reader sees the
+       structure; emphasis only differentiates current execution. */
+    .node.is-active circle,
+    .node.is-active .skill-core { stroke: #2c3338; stroke-width: 1.8; }
+    .node.primitive.is-active circle { filter: drop-shadow(0 0 5px currentColor); color: #d97757; }
+    .node.api.is-active circle      { filter: drop-shadow(0 0 4px currentColor); color: #d97757; }
+    .node.skill.is-active .skill-halo { fill-opacity: 0.55; }
+    /* Inactive halo: small fill-opacity so the cluster color hints at
+       the node's identity without dominating. Combined with the
+       group-level INACTIVE_DIM in renderFrame, the effective opacity
+       is ~0.072 (0.18 × 0.4) — visible but clearly backgrounded. The
+       saturate filter from earlier was dropped per the Berkeley-style
+       direction: keep color recognizable, dim with opacity. */
+    .node.skill.is-inactive .skill-halo {
+      fill-opacity: 0.18;
+    }
+    .node.skill.is-active .skill-core {
+      stroke: #fff;
+      stroke-width: 2.2;
+      filter: drop-shadow(0 0 6px rgba(217, 119, 87, 0.55));
+    }
+    .node.skill.is-active .skill-label { fill: var(--ink); font-weight: 600; }
+    /* Inactive label stays in the normal ink color; group-level opacity
+       (set in renderFrame) dims it to ~40% so it reads as backgrounded
+       without losing legibility. */
+    .node.skill.is-inactive .skill-label { fill: var(--ink); }
+    /* Refactor-born skills (`birth_source === 'refactor'`) get a
+       dashed core stroke. Reads as "this skill emerged from the
+       optimization pass extracting/merging existing skills" vs the
+       solid-stroke "action-agent synthesized this for a new task".
+       Applies in both active and inactive states so the affordance is
+       always visible (just dimmer when inactive). */
+    .node.skill.is-refactor-born .skill-core { stroke-dasharray: 3, 2; }
+    /* During a refactor pause: highlight existing skills that
+       contributed to the refactor (the "input" siblings/callers) with
+       a yellow halo + thicker stroke. Tells the eye which existing
+       nodes the new skill was synthesized from. Wins specificity over
+       the inactive-halo rule. */
+    .node.skill.is-refactor-source .skill-halo {
+      fill: #d4a017 !important;
+      fill-opacity: 0.55 !important;
+      filter: blur(3.5px) !important;
+    }
+    .node.skill.is-refactor-source .skill-core {
+      stroke: #d4a017;
+      stroke-width: 2.4;
+    }
+    /* New edges added during a refactor pause animate-draw over 0.6s
+       so the eye can follow the connection forming.
+       stroke-dasharray + stroke-dashoffset are set INLINE per-line in JS,
+       matched to each line's actual length (Math.hypot of dx,dy). A fixed
+       value (e.g. 200) creates a repeating dash pattern on lines longer
+       than 200px, producing visible disconnects mid-animation — set
+       inline per-line so we get one clean growing line regardless of length. */
+    .edge.is-refactor-new-edge {
+      animation: edge-draw 0.6s ease-out forwards;
+    }
+    @keyframes edge-draw { to { stroke-dashoffset: 0; } }
+
+    /* Hover-to-focus styling is set INLINE by applyFocusState in JS
+       (function defined near hideTooltip). Inline styles guarantee they
+       beat the various places iter-state opacity gets set (.style on
+       skill groups, .attr on primitive/api circles). See the function's
+       docstring for the design rationale. No CSS rules needed here. */
+    .edge.is-active.skill-skill {
+      stroke: #2c3338;
+      stroke-width: 2.4;
+      stroke-opacity: 0.95;
+      filter: drop-shadow(0 0 2px rgba(217, 119, 87, 0.4));
+    }
+    .edge.is-active.skill-primitive {
+      stroke: #8b6f4e;
+      stroke-width: 1.6;
+      stroke-opacity: 0.92;
+      stroke-dasharray: none;
+    }
+    .edge.is-active.api-primitive {
+      stroke: #6b5640;
+      stroke-width: 1.4;
+      stroke-opacity: 0.92;
+      stroke-dasharray: none;
+    }
+    /* Inactive edge: visible but backgrounded. With the group-level
+       INACTIVE_DIM (0.4) in renderFrame multiplying this, effective
+       stroke opacity is ~0.13 — present in the visual frame without
+       distracting from active edges. */
+    .edge.is-inactive { stroke-opacity: 0.32; }
+
+    /* ===== Objective curves (full width below) ===== */
+    .obj-panel {
+      border-top: 1px solid var(--rule);
+      background: var(--card);
+      padding: 0.75rem 1rem;
+    }
+    .obj-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.4rem;
+    }
+    .obj-panel-header h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0;
+      color: var(--ink);
+    }
+    .obj-legend {
+      display: inline-flex;
+      gap: 0.9rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .obj-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .obj-legend-dot {
+      width: 12px; height: 3px; border-radius: 1px;
+    }
+    #obj-svg {
+      display: block;
+      width: 100%;
+      height: 180px;
+    }
+    .obj-line {
+      fill: none;
+      stroke-width: 1.8;
+    }
+    .obj-line.J { stroke-width: 2.6; }
+    .obj-axis text {
+      font-size: 9.5px;
+      fill: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .obj-axis path, .obj-axis line { stroke: var(--rule); }
+    .obj-playhead {
+      stroke: var(--orange);
+      stroke-width: 2;
+      stroke-dasharray: 4 3;
+    }
+
+    /* ===== Timeline (YouTube-style overlay player bar) =====
+       Lives INSIDE .mc-panel as an absolute-positioned overlay at the bottom.
+       Hidden by default; fades in when mouse moves over the panel; auto-hides
+       during playback after a short idle (handled by JS auto-hide controller).
+       Always visible while paused (also via JS).
+    */
+    .timeline-row {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.5rem 0.9rem 0.6rem;
+      background: linear-gradient(180deg,
+                                  rgba(0,0,0,0) 0%,
+                                  rgba(0,0,0,0.55) 30%,
+                                  rgba(0,0,0,0.85) 100%);
+      color: #e6e6e6;
+      z-index: 5;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+    .timeline-row.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    /* Play / pause: round, accent-colored, only icon */
+    .timeline-row #play-btn {
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 500;
+      width: 32px; height: 32px;
+      padding: 0; line-height: 30px;
+      background: transparent;
+      color: #e6e6e6;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+    .timeline-row #play-btn:hover { background: rgba(255,255,255,0.12); }
+    .timeline-row #play-btn.is-playing { color: var(--orange); }
+
+    /* Inventory / chat toggles — same shape as the play button. */
+    .timeline-row .overlay-toggle {
+      background: transparent;
+      border: 0;
+      color: rgba(255,255,255,0.85);
+      width: 30px; height: 30px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background 0.12s, color 0.12s;
+    }
+    .timeline-row .overlay-toggle:hover { background: rgba(255,255,255,0.12); }
+    .timeline-row .overlay-toggle.is-on { color: var(--orange); background: rgba(217,119,87,0.15); }
+
+    /* In-video overlays: chat + inventory. Hidden by default; the JS
+       toggles `hidden` based on the player-bar buttons. */
+    .mc-inventory, .mc-chat {
+      position: absolute;
+      z-index: 3;
+      pointer-events: none;
+      color: white;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      background: rgba(20, 24, 30, 0.62);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      transition: opacity 0.2s;
+    }
+    .mc-inventory { left: 12px;  bottom: 60px; padding: 6px 8px; max-width: 60%; }
+    .mc-chat      {
+      right: 12px; bottom: 60px;
+      padding: 6px 10px;
+      max-width: 46%;
+      max-height: 60%;
+      overflow-y: auto;            /* scrollable when content overflows */
+      overscroll-behavior: contain;/* don't bubble scroll to the page */
+      pointer-events: auto;        /* allow wheel + drag inside the panel */
+      display: flex;
+      flex-direction: column;      /* newest line gets pinned to the bottom */
+      justify-content: flex-end;   /* fills from bottom up — like MC chat */
+    }
+    .mc-chat::-webkit-scrollbar { width: 6px; }
+    .mc-chat::-webkit-scrollbar-track { background: transparent; }
+    .mc-chat::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 3px; }
+    .mc-inventory[hidden], .mc-chat[hidden] { display: none; }
+    .mc-inv-row { display: inline-flex; align-items: center; gap: 4px; margin-right: 10px; vertical-align: middle; }
+    .mc-inv-icon {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border-radius: 2px;
+      vertical-align: middle;
+    }
+    .mc-inv-name { font-size: 10px; opacity: 0.85; }
+    .mc-inv-count { font-weight: 700; color: #ffb464; }
+    .mc-inv-empty { font-size: 10px; opacity: 0.6; font-style: italic; }
+    .mc-chat-line {
+      display: block;
+      line-height: 1.45;
+      font-size: 11px;
+      padding: 1px 0;
+      opacity: 0.9;
+    }
+    .mc-chat-line .ts { color: #ffb464; margin-right: 6px; font-size: 10px; }
+    .mc-chat-line.is-success { color: #b9d8b3; }
+    .mc-chat-line.is-fail    { color: #d6918a; }
+    .mc-chat-line.is-task    { color: #fff; font-weight: 600; }
+    .mc-chat-line.is-skill   { color: #d2c0a4; }
+    /* Time display "1:20 / 2:42" */
+    .time-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: #c0c5cb;
+      flex: 0 0 auto;
+      letter-spacing: 0.02em;
+    }
+    .time-display .time-sep {
+      opacity: 0.5;
+      margin: 0 0.25rem;
+    }
+    /* Speed selector */
+    #speed-selector {
+      font-family: inherit;
+      font-size: 0.78rem;
+      padding: 0.2rem 0.45rem;
+      background: rgba(255,255,255,0.08);
+      color: #e6e6e6;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 4px;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+    #speed-selector:hover { background: rgba(255,255,255,0.15); }
+    #speed-selector option { background: #1f2933; color: #e6e6e6; }
+    .timeline-slider {
+      flex: 1;
+      position: relative;
+      height: 32px;
+      display: flex;
+      align-items: center;
+    }
+    .timeline-slider input {
+      width: 100%;
+      margin: 0;
+      position: relative;
+      z-index: 2;
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;        /* track styled below */
+      cursor: pointer;
+      height: 32px;
+    }
+    /* Track + thumb (Chrome / Webkit) */
+    .timeline-slider input::-webkit-slider-runnable-track {
+      height: 4px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 2px;
+      transition: height 0.15s;
+    }
+    .timeline-slider input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      background: #d97757;
+      border-radius: 50%;
+      margin-top: -5px;                /* center on 4px track */
+      cursor: grab;
+      box-shadow: 0 0 0 2px rgba(217,119,87,0.25);
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .timeline-slider:hover input::-webkit-slider-runnable-track { height: 6px; }
+    .timeline-slider:hover input::-webkit-slider-thumb {
+      transform: scale(1.3);
+      box-shadow: 0 0 0 4px rgba(217,119,87,0.30);
+    }
+    /* Track + thumb (Firefox) */
+    .timeline-slider input::-moz-range-track {
+      height: 4px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 2px;
+    }
+    .timeline-slider input::-moz-range-thumb {
+      width: 14px; height: 14px;
+      background: #d97757;
+      border: none;
+      border-radius: 50%;
+      cursor: grab;
+      box-shadow: 0 0 0 2px rgba(217,119,87,0.25);
+    }
+    /* Iter boundary markers — small dots ON the track itself, like YouTube chapter markers */
+    .iter-markers {
+      position: absolute;
+      left: 0; right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 4px;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .iter-marker {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px; height: 8px;
+      padding: 0; margin: 0;
+      background: rgba(255,255,255,0.85);
+      border: 2px solid #1f2933;
+      border-radius: 50%;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: transform 0.15s;
+    }
+    .iter-marker:hover { transform: translate(-50%, -50%) scale(1.4); }
+    /* Tooltip while dragging the slider — shows current iter task + time */
+    .slider-tooltip {
+      position: absolute;
+      bottom: 100%;
+      transform: translateX(-50%);
+      margin-bottom: 0.5rem;
+      background: rgba(31,41,51,0.95);
+      color: white;
+      padding: 0.45rem 0.7rem;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 5;
+    }
+    .slider-tooltip.is-visible { display: block; }
+    .slider-tooltip .tt-iter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      opacity: 0.85;
+      margin-bottom: 0.15rem;
+    }
+    .slider-tooltip .tt-task   { font-weight: 500; }
+    .slider-tooltip .tt-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      opacity: 0.7;
+      margin-top: 0.2rem;
+    }
+    /* Hover tooltip on the composite-objective panel — shows objective values */
+    .obj-tooltip {
+      position: absolute;
+      background: rgba(31,41,51,0.95);
+      color: white;
+      padding: 0.5rem 0.75rem;
+      border-radius: 5px;
+      font-size: 0.78rem;
+      line-height: 1.5;
+      pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      display: none;
+      z-index: 10;
+      min-width: 170px;
+    }
+    .obj-tooltip.is-visible { display: block; }
+    .obj-tooltip .tt-iter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      opacity: 0.9;
+      margin-bottom: 0.1rem;
+    }
+    .obj-tooltip .tt-task {
+      font-size: 0.72rem;
+      opacity: 0.75;
+      margin-bottom: 0.3rem;
+      max-width: 200px;
+      white-space: normal;
+    }
+    .obj-tooltip .tt-row {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+    }
+    .timeline-info {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.84rem;
+      color: var(--muted);
+      min-width: 110px;
+      text-align: right;
+    }
+
+    .stats-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      padding: 0.5rem 1rem 0.7rem;
+      background: #faf6ef;
+      border-top: 1px solid var(--rule);
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+    .stats-strip strong { color: var(--ink); font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+    .stats-strip .stat-task { flex: 1; min-width: 200px; }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem 1.4rem;
+      padding: 0.55rem 1rem;
+      font-size: 0.82rem;
+      background: #faf6ef;
+      border-top: 1px solid var(--rule);
+    }
+    .legend-item { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--muted); }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid #2c3338; }
+
+    /* Tooltip */
+    #tooltip {
+      position: fixed;
+      pointer-events: none;
+      background: rgba(31, 41, 51, 0.96);
+      color: white;
+      padding: 0.55rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.86rem;
+      max-width: 260px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 100;
+    }
+    #tooltip .tt-name { font-weight: 700; margin-bottom: 0.2rem; }
+    #tooltip .tt-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: #a6c5e5; }
+    #tooltip .tt-cluster { font-size: 0.78rem; color: #d6cbb8; margin-top: 0.15rem; }
+
+    /* Status banner */
+    .v2-banner {
+      max-width: 1380px;
+      margin: 0 auto 0.7rem;
+      padding: 0.55rem 0.9rem;
+      background: #fff8e5;
+      border: 1px solid #ffd97a;
+      border-radius: 6px;
+      font-size: 0.84rem;
+      color: #6f5b1a;
+    }
+
+    @media (max-width: 1000px) {
+      .v2-row-top { grid-template-columns: 1fr; }
+      .graph-panel { border-left: none; border-top: 1px solid var(--rule); }
+      .mc-panel { min-height: 220px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Inside a PSN run</h1>
+  <p class="subtitle">Bot in Minecraft (left), skill graph evolution (right), composite objective J(N) below.</p>
+
+  <div class="v2-banner">
+    Minecraft frames are rendered headlessly via Fabric mod from server-recorded
+    <code>.mcpr</code> replays.
+  </div>
+
+  <div class="v2-frame">
+    <div class="v2-row-top">
+      <div class="mc-panel">
+        <div class="mc-panel-img" id="mc-img"
+             style="background-image: url('static/images/quest/shared_quest.png');"></div>
+        <video class="mc-panel-video" id="mc-video"
+               muted playsinline preload="auto"></video>
+        <div class="mc-panel-overlay">
+          <div class="mc-iter" id="mc-iter">iter 0</div>
+          <div class="mc-task" id="mc-task">—</div>
+        </div>
+        <!-- Refactor-stage overlay (hidden by default; shown by
+             showRefactorOverlay during pause segments between iters). -->
+        <div class="mc-refactor-overlay" id="mc-refactor-overlay">
+          <div class="ro-tag">— REFACTOR STAGE —</div>
+          <div class="ro-title" id="ro-title">Reorganizing skill network</div>
+          <div id="ro-lines"></div>
+        </div>
+        <!-- Inventory strip (bottom-left): per-frame inventory items with counts. -->
+        <div class="mc-inventory" id="mc-inventory" hidden></div>
+        <!-- Chat log (bottom-right): synthesized per-frame events (task, skill, ✓/✗). -->
+        <div class="mc-chat" id="mc-chat" hidden></div>
+        <!-- Player bar overlay (YouTube-style): hidden by default, fades in
+             on mousemove over the panel, auto-hides during playback after a
+             short idle period, always visible when paused. -->
+        <div class="timeline-row" id="player-bar">
+          <button id="play-btn" title="Play / Pause" aria-label="Play / pause">▶</button>
+          <button id="chat-toggle" class="overlay-toggle" title="Toggle chat" aria-label="Toggle chat">💬</button>
+          <button id="inv-toggle"  class="overlay-toggle" title="Toggle inventory" aria-label="Toggle inventory">🎒</button>
+          <span class="time-display"><span id="time-current">0:00</span><span class="time-sep">/</span><span id="time-total">0:00</span></span>
+          <div class="timeline-slider">
+            <input type="range" id="iter-slider" min="0" max="162" value="0" step="0.05" />
+          </div>
+          <select id="speed-selector" title="Playback speed" aria-label="Playback speed">
+            <option value="1">1×</option>
+            <option value="2">2×</option>
+            <option value="4" selected>4×</option>
+            <option value="8">8×</option>
+            <option value="16">16×</option>
+          </select>
+        </div>
+      </div>
+      <div class="graph-panel">
+        <svg id="graph-svg" viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+    </div>
+
+    <div class="obj-panel">
+      <div class="obj-panel-header">
+        <h3>Composite objective <span style="color: var(--muted); font-weight: 500;">J(N) = 0.4·R<sub>task</sub> + 0.3·R<sub>reliab</sub> + 0.2·R<sub>struct</sub> + 0.1·R<sub>cons</sub></span></h3>
+        <div class="obj-legend" id="obj-legend"></div>
+      </div>
+      <div style="font-size: 0.7rem; color: var(--muted); padding: 0 0.6rem 0.3rem; font-style: italic;">
+        R<sub>reliab</sub> and J normalized via (V + 0.5)/1.5; raw values in per-skill tooltip.
+      </div>
+      <svg id="obj-svg" viewBox="0 0 1340 180" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+
+
+    <div class="stats-strip">
+      <span>Skills: <strong id="stat-skills">0</strong></span>
+      <span>Edges: <strong id="stat-edges">0</strong></span>
+      <span>R<sub>task</sub>: <strong id="stat-rtask">—</strong></span>
+      <span>R<sub>struct</sub>: <strong id="stat-rstruct">—</strong></span>
+      <span>J: <strong id="stat-j">—</strong></span>
+      <span class="stat-task">Task: <strong id="stat-task">—</strong></span>
+    </div>
+
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <div id="tooltip"></div>
+
+  <script>
+    const DATA_URL = "data/hero_evolution_gpt5mini_phase2c.json?v=" + Date.now();
+    // Fallback image when a frame has no rendered PNG (e.g. iter without
+    // covering .mcpr, or duplicate (iter, task) pairs).
+    const MC_FALLBACK_IMG = "static/images/quest/shared_quest.png";
+
+    // Legend lists ONLY the learned-skill clusters. The primitive
+    // categories (Primitive — World / — Crafting / — Mob) are kept in
+    // the JSON's `primitives` list (with their own colors) so the
+    // CONTROL PRIMITIVES column still renders in distinct colors —
+    // but they're omitted from the legend below the viz because
+    // primitives are immutable / not part of the learned network and
+    // the legend's purpose is to explain the LEARNED skill node colors.
+    const CLUSTER_LEGEND = [
+      { cluster: "Foundational helpers", color: "#9e9e9e" },
+      { cluster: "Resource gathering",   color: "#d97757" },
+      { cluster: "Crafting primitives",  color: "#5e8ec4" },
+      { cluster: "Composite tooling",    color: "#3a5d8a" },
+      { cluster: "Spatial / placement",  color: "#8b6bc4" },
+    ];
+
+    const OBJ_COLORS = {
+      R_task:   "#d97757",
+      R_reliab: "#5e8ec4",
+      R_struct: "#3a5d8a",
+      R_cons:   "#8b6bc4",
+      J:        "#1f2933",
+    };
+
+    const renderLegend = () => {
+      const c = d3.select("#legend");
+      CLUSTER_LEGEND.forEach(d => {
+        const item = c.append("span").attr("class", "legend-item");
+        item.append("span").attr("class", "legend-dot").style("background", d.color);
+        item.append("span").text(d.cluster);
+      });
+      const ol = d3.select("#obj-legend");
+      Object.entries(OBJ_COLORS).forEach(([name, color]) => {
+        const item = ol.append("span").attr("class", "obj-legend-item");
+        item.append("span").attr("class", "obj-legend-dot").style("background", color);
+        item.append("span").text(name);
+      });
+    };
+
+    // 3-column layout: Mineflayer APIs (leftmost) | Control Primitives | Learned Skill Network
+    const GW = 1100, GH = 380;
+    const API_X = 80;
+    const PRIM_X = 260;
+    const SKILL_X_LEFT = 480;
+    const SKILL_X_RIGHT = 1050;
+    const G_TOP_PAD = 40;
+    const G_BOTTOM_PAD = 25;
+
+    /**
+     * Mineflayer APIs that PSN's control primitives wrap. Hard-coded mapping
+     * since DATA.json doesn't currently carry API edges; matches the actual
+     * mineflayer calls each primitive issues.
+     */
+    const MINEFLAYER_APIS = [
+      { name: "bot.dig",             cluster: "API — World" },
+      { name: "bot.placeBlock",      cluster: "API — World" },
+      { name: "bot.findBlock",       cluster: "API — World" },
+      { name: "bot.collectBlock",    cluster: "API — World" },
+      { name: "bot.pathfinder.goto", cluster: "API — Movement" },
+      { name: "bot.craft",           cluster: "API — Crafting" },
+      { name: "bot.recipesFor",      cluster: "API — Crafting" },
+      { name: "bot.openContainer",   cluster: "API — Crafting" },
+      { name: "bot.attack",          cluster: "API — Mob" },
+      { name: "bot.lookAt",          cluster: "API — Mob" },
+      { name: "bot.equip",           cluster: "API — Inventory" },
+      { name: "bot.consume",         cluster: "API — Inventory" },
+    ];
+    const PRIMITIVE_API_MAP = {
+      "mineBlock":       ["bot.dig", "bot.findBlock", "bot.collectBlock", "bot.pathfinder.goto", "bot.equip"],
+      "exploreUntil":    ["bot.pathfinder.goto", "bot.findBlock"],
+      "placeItem":       ["bot.placeBlock", "bot.findBlock", "bot.equip"],
+      "craftItem":       ["bot.craft", "bot.recipesFor", "bot.findBlock"],
+      "useChest":        ["bot.openContainer", "bot.findBlock"],
+      "killMob":         ["bot.attack", "bot.lookAt", "bot.pathfinder.goto", "bot.equip"],
+      "smeltItem":       ["bot.openContainer", "bot.findBlock"],
+      "waitForBlock":    ["bot.findBlock"],
+      "consumeItem":     ["bot.consume"],
+      "shoot":           ["bot.attack", "bot.lookAt", "bot.equip"],
+    };
+    const API_CLUSTER_COLORS = {
+      "API — World":     "#a1685c",
+      "API — Movement":  "#5b8a4f",
+      "API — Crafting":  "#5b7d9c",
+      "API — Mob":       "#7a6da3",
+      "API — Inventory": "#a07a4f",
+    };
+
+    let DATA = null;
+    let primPositions = {};
+    let skillPositions = {};
+    let apiPositions = {};
+    let edgesGroup, nodesGroup;
+
+    let currentFrame = 0;
+    let isPlaying = false;
+    let isDragging = false;
+    let isDraggingObj = false;             // dragging on the composite-objective chart
+    let playbackT = 0;        // global playback time in seconds (0..TOTAL_DURATION)
+    let SEGMENTS = [];         // [{frameIdx, iterIdx, url, dur, tStart, tEnd}, ...]
+    let TOTAL_DURATION = 0;
+    let currentVideoSrcKey = null;          // tracks loaded src by seg.url (avoids string-compare quirks)
+    // Frame-index → video metadata. Frame index is the array index in DATA.frames
+    // (NOT iter index, since some iters appear twice for fail/success retry).
+    // Add an entry for each frame whose .mcpr was successfully rendered to MP4.
+    // Durations match the on-disk MP4s after running
+    // scripts/trim_video_freezes.py with --min-freeze 10s. These videos
+    // were rendered with handler.spectateEntity(bot) + hudHidden=false,
+    // so the bot's actual hotbar / hearts / chat are baked into each
+    // frame natively (no need for DOM overlays to be time-aligned).
+    // FRAME_VIDEOS used to be a hard-coded { iterIdx: {url, dur} } map. As
+    // of v7 (2026-05-09 PSN re-run with the fixed mcpr recorder + per-frame
+    // inventory injection), the per-iter video is recorded into the
+    // hero-evolution JSON itself as `frame.video_url` + `frame.video_duration_s`,
+    // so the page picks them up dynamically. Old hard-coded entries kept as
+    // a fallback for any frame that lacks video metadata.
+    let FRAME_VIDEOS_FALLBACK = {
+      0: { url: "static/videos/iter_000_ensure_you_have_4_wood_logs_success.mp4", dur: 119 },
+      2: { url: "static/videos/iter_001_craft_1_crafting_table_success.mp4",     dur:  23 },
+    };
+
+    // Fixed pause inserted between iter videos when PSN's refactor
+    // pass produced one or more new skills during that iter (scaled
+    // up for paper-grade narrative rhythm regardless of how many
+    // refactors fired in the iter).
+    const REFACTOR_PAUSE_S = 2.5;
+
+    function buildSegments() {
+      SEGMENTS = [];
+      let cumT = 0;
+      for (let i = 0; i < DATA.frames.length; i++) {
+        const fr = DATA.frames[i];
+        let url = fr.video_url;
+        let dur = fr.video_duration_s;
+        if (!url) {
+          const fb = FRAME_VIDEOS_FALLBACK[i];
+          if (!fb) continue;
+          url = fb.url; dur = fb.dur;
+        }
+        // Defensive: never accept non-positive duration. A negative or zero
+        // dur would make tEnd ≤ tStart so findSegment can never return this
+        // segment, AND cumT would go backward causing subsequent segments to
+        // overlap older ones — root cause of slider-drag + auto-advance bugs
+        // when bad data slipped through (e.g., build_hero_data.py picked an
+        // MCPR whose window didn't cover the skill).
+        if (!(dur > 0)) {
+          console.warn(`[buildSegments] iter ${fr.iteration} (frame ${i}): non-positive video_duration_s=${dur} — clamping to 1s. Segments downstream would otherwise overlap and break findSegment.`);
+          dur = 1.0;
+        }
+        SEGMENTS.push({
+          kind: 'video',
+          frameIdx: i,
+          iterIdx: fr.iteration,
+          url: url, dur: dur,
+          tStart: cumT, tEnd: cumT + dur,
+        });
+        cumT += dur;
+
+        // Insert a "refactor pause" segment after this iter's video
+        // if PSN's refactor pass created any new skills during this
+        // iter. Pause segments have NO video URL — applyTime keeps
+        // the videoEl paused on its previous frame and overlays the
+        // refactor stage panel; rafLoop's pause branch advances
+        // playbackT manually since videoEl.currentTime won't.
+        const refs = fr.refactor_after || [];
+        if (refs.length > 0) {
+          SEGMENTS.push({
+            kind: 'refactor_pause',
+            frameIdx: i,
+            iterIdx: fr.iteration,
+            url: null, dur: REFACTOR_PAUSE_S,
+            tStart: cumT, tEnd: cumT + REFACTOR_PAUSE_S,
+            refactors: refs,
+          });
+          cumT += REFACTOR_PAUSE_S;
+        }
+      }
+      TOTAL_DURATION = cumT;
+    }
+
+    // Paper-canonical display names matching scripts/build_v10_hero_data.py's
+    // REFACTOR_DISPLAY_NAMES dict (and the COLM 2026 LaTeX). Used in the
+    // pause overlay and in the per-skill tooltip's birth-line so we don't
+    // expose internal enum values to the reader.
+    const REFACTOR_DISPLAY_NAMES_JS = {
+      'extract_common':  'Common Subskill Extraction',
+      'merge_siblings':  'Sibling Specializations',
+      'behavioral':      'Behavioral Coverage',
+      'parametric':      'Parametric Coverage',
+      'duplication':     'Duplication',
+    };
+
+    // Render the refactor-stage overlay panel content. Idempotent —
+    // same `refactors` array is fine to call repeatedly per raf tick.
+    let _lastRefactorOverlayKey = null;
+    function showRefactorOverlay(refactors) {
+      const overlayEl = document.getElementById("mc-refactor-overlay");
+      const linesEl = document.getElementById("ro-lines");
+      const key = refactors.map(r => r.record_id || r.summary).join('|');
+      if (key !== _lastRefactorOverlayKey) {
+        linesEl.innerHTML = refactors.map(r => {
+          // Render summary with skill names color-coded: created skills
+          // orange, participants blue. Build by token replacement on the
+          // pre-rendered summary string so the data file owns the phrasing.
+          let html = (r.summary || '');
+          (r.created || []).forEach(c => {
+            html = html.split(c).join(`<span class="ro-skill">${c}</span>`);
+          });
+          (r.participants || []).forEach(p => {
+            // Don't double-wrap a name that's already in created.
+            if ((r.created || []).includes(p)) return;
+            html = html.split(p).join(`<span class="ro-source">${p}</span>`);
+          });
+          const dn = r.display_name || REFACTOR_DISPLAY_NAMES_JS[r.type] || r.type;
+          return `<div class="ro-line">`
+            + `<span class="ro-type">${dn}</span> · ${html}`
+            + `</div>`;
+        }).join('');
+        _lastRefactorOverlayKey = key;
+      }
+      overlayEl.classList.add('is-visible');
+    }
+    function hideRefactorOverlay() {
+      document.getElementById("mc-refactor-overlay")
+        .classList.remove('is-visible');
+      _lastRefactorOverlayKey = null;   // re-render fresh on next show
+    }
+
+    function findSegment(t) {
+      if (!SEGMENTS.length) return null;
+      for (const s of SEGMENTS) {
+        if (t >= s.tStart && t < s.tEnd) return s;
+      }
+      return SEGMENTS[SEGMENTS.length - 1];   // clamp to last
+    }
+
+    /**
+     * Recompute R_task per the paper formula:
+     *   R_task = mean of success values over a sliding window of the W most
+     *            recent attempts (default W=20)
+     * Source: skillnet/tools/learning_dynamics_recorder.py:441-445
+     *   self._recent_successes.append(success)        # append first
+     *   r_task = sum(recent_successes) / len(recent_successes) if recent else 0
+     *
+     * Each frame in DATA.frames is one attempt (PSN logs per-attempt rows),
+     * so we append → then compute in order. This is more honest than a flat
+     * per-task value, exposing the rolling success rate as PSN would see it.
+     *
+     * J is recomputed with the same composite weights (0.4·R_task + 0.3·
+     * R_reliab + 0.2·R_struct + 0.1·R_cons).
+     */
+    function transformRTaskRollingWindow(frames, windowSize = 20) {
+      const recent = [];
+      for (const f of frames) {
+        recent.push(f.success ? 1 : 0);
+        if (recent.length > windowSize) recent.shift();
+        if (f.objectives) {
+          f.objectives.R_task = recent.reduce((a, b) => a + b, 0) / recent.length;
+          const w = f.objectives.weights || [0.4, 0.3, 0.2, 0.1];
+          f.objectives.J =
+            (w[0] || 0) * (f.objectives.R_task   || 0) +
+            (w[1] || 0) * (f.objectives.R_reliab || 0) +
+            (w[2] || 0) * (f.objectives.R_struct || 0) +
+            (w[3] || 0) * (f.objectives.R_cons   || 0);
+        }
+      }
+    }
+
+    /**
+     * Prepend a synthetic "initial state" frame at the start of frames so the
+     * objective curves naturally begin at R=0 at x=0. Marked as a fail so the
+     * rolling-window R_task starts from 0 rather than 1.0 (the existing iter-0
+     * success). Combined with computeChartX's per-attempt offset, this makes
+     * iter 0 render as two attempts (synthetic-fail at x=0 → R_task=0, real
+     * success at x=0.5 → R_task=0.5), matching the per-attempt semantics.
+     */
+    function prependSyntheticInitFrame(frames) {
+      if (!frames.length) return;
+      const seed = frames[0];
+      if (seed && seed._synthetic_init) return;  // idempotent
+      const synth = JSON.parse(JSON.stringify(seed));
+      synth.success = false;
+      synth._synthetic_init = true;
+      synth.objectives = {
+        R_task: 0, R_reliab: 0, R_struct: 0, R_cons: 0, J: 0,
+        weights: (seed.objectives && seed.objectives.weights) || [0.4, 0.3, 0.2, 0.1],
+      };
+      // Drop active_skills/edges so the synthetic frame represents pre-iter state.
+      synth.active_skills = [];
+      synth.n_active_skills = 0;
+      synth.n_edges_skill_skill = 0;
+      synth.edges_skill_skill = [];
+      synth.edges_skill_primitive = [];
+      // CRITICAL: drop the deep-cloned video_url + duration. Without this,
+      // buildSegments would add iter 0's video TWICE consecutively (once for
+      // this synth frame, once for the real iter 0) — that was the source of
+      // the "first two videos are duplicates" bug.
+      delete synth.video_url;
+      delete synth.video_duration_s;
+      // Same logic for bot_events: the synth init frame represents pre-iter
+      // state, so it shouldn't carry the real iter 0's chat/inventory.
+      synth.bot_events = [];
+      frames.unshift(synth);
+    }
+
+    /**
+     * Compute each frame's chart x-position. PSN's `learning_dynamics`
+     * records are timestamped at the END of each iter (success/failure
+     * known, refactors run, graph topology updated), but labeled with
+     * the iter index that just finished. To match the natural reading
+     *   chart x=0 → "before any iter completed" → R=0 anchor
+     *   chart x=K → "after K iters completed" → PSN's iter K-1 data
+     * we shift PSN iter K to chart x=K+1. The (0,0) anchor is added
+     * by setupObjPanel's line generator (synthetic, not a frame).
+     */
+    function computeChartX(frames) {
+      for (let i = 0; i < frames.length; i++) {
+        frames[i]._chartX = frames[i].iteration + 1;
+      }
+    }
+
+
+    /** Format seconds → "M:SS" for the YouTube-style time display. */
+    function formatTime(secs) {
+      secs = Math.max(0, Math.floor(secs));
+      const m = Math.floor(secs / 60);
+      const s = secs % 60;
+      return `${m}:${String(s).padStart(2, "0")}`;
+    }
+
+    /**
+     * Inverse mapping for composite-objective drag-to-seek.
+     * Given a chart x, find the corresponding playback time in seconds.
+     * Segment K's video covers chart range [prev_seg's _chartX, seg's _chartX]
+     * over [tStart, tEnd] playback seconds.
+     */
+    function iterFracToGlobalT(chartX) {
+      if (!SEGMENTS.length) return 0;
+      let prevEndX = 0;
+      for (let i = 0; i < SEGMENTS.length; i++) {
+        const seg = SEGMENTS[i];
+        const segEndX = DATA.frames[seg.frameIdx]._chartX;
+        if (chartX <= segEndX) {
+          const span = (segEndX - prevEndX) || 1;
+          const progress = Math.max(0, Math.min(1, (chartX - prevEndX) / span));
+          return seg.tStart + progress * seg.dur;
+        }
+        prevEndX = segEndX;
+      }
+      return TOTAL_DURATION;       // beyond last segment
+    }
+
+    /**
+     * Single source of truth for the timeline. Updates video, slider, objective
+     * playhead, mc-iter/mc-task overlay, stats, all from a single playback time
+     * t (seconds).
+     *
+     * sourceFromVideo=true means we're reading from <video>'s currentTime in the
+     * raf loop — DON'T write back to video (would cause feedback / stutter).
+     * sourceFromVideo=false means user/programmatic seek — DO push to video.
+     */
+    function applyTime(t, sourceFromVideo, skipVideoSeek) {
+      if (!SEGMENTS.length) return;
+      t = Math.max(0, Math.min(TOTAL_DURATION, t));
+      playbackT = t;
+      const seg = findSegment(t);
+      const tInSeg = t - seg.tStart;
+      const inRefactorPause = (seg.kind === 'refactor_pause');
+
+      const videoEl = document.getElementById("mc-video");
+      const imgEl = document.getElementById("mc-img");
+
+      if (inRefactorPause) {
+        // Pause segment: keep the video frozen on whatever frame it was
+        // showing (the last frame of the previous iter video). Do NOT
+        // change src and do NOT seek — both would reset the player and
+        // ruin the "freeze last frame" effect.
+        if (!videoEl.paused) videoEl.pause();
+        showRefactorOverlay(seg.refactors);
+      } else {
+        hideRefactorOverlay();
+        // Track src via JS variable — comparing videoEl.src (browser-resolved
+        // absolute URL) against our relative URL was unreliable in some cases
+        // and could trigger silent re-loads that reset currentTime to 0.
+        const srcChanged = (currentVideoSrcKey !== seg.url);
+        if (srcChanged) {
+          // Brief fade-out → fade-in around the src swap. Different mcpr
+          // recordings can begin at slightly different bot positions / view
+          // angles, so a hard cut is jarring. The fade also masks the black
+          // frame the browser shows while loading the new clip.
+          videoEl.classList.add("is-segfade");
+          videoEl.src = seg.url;
+          currentVideoSrcKey = seg.url;
+          const fadeBackIn = () => {
+            videoEl.classList.remove("is-segfade");
+            videoEl.removeEventListener("playing", fadeBackIn);
+            videoEl.removeEventListener("loadeddata", fadeBackIn);
+          };
+          videoEl.addEventListener("playing", fadeBackIn, { once: true });
+          videoEl.addEventListener("loadeddata", fadeBackIn, { once: true });
+        }
+        videoEl.classList.add("is-active");
+        imgEl.classList.add("is-hidden");
+        // Skip the currentTime= write only when the caller asked AND the src
+        // didn't just change. A fresh src= reset currentTime to 0; we have to
+        // seek into it regardless of throttle to keep the new clip in sync.
+        if (!sourceFromVideo && (!skipVideoSeek || srcChanged)) {
+          // Avoid setting currentTime if seek is < 50ms away — browsers can
+          // stutter on rapid seeks. Slider input fires at high frequency.
+          if (Math.abs(videoEl.currentTime - tInSeg) > 0.05) {
+            try { videoEl.currentTime = tInSeg; } catch (e) {}
+          }
+        }
+      }
+
+      const slider = document.getElementById("iter-slider");
+      if (!isDragging && !isDraggingObj) slider.value = t;
+
+      // Fast fade-in for skills/edges that are NEW in this iter. Earlier
+       // version ramped opacity over the FULL segment (~132s for iter 0),
+       // which left newborn skills invisible until video end. Now we ramp
+       // 0→1 in the first FADE_IN_S seconds of the segment so the user can
+       // see the current skill-network state ~immediately.
+      // For refactor pauses, we ramp over the full pause so refactor-born
+       // skills fade in across the whole "REFACTOR STAGE" panel.
+      const FADE_IN_S = inRefactorPause ? seg.dur : 1.0;
+      const newOpacity = Math.max(0, Math.min(1, tInSeg / FADE_IN_S));
+
+      // Frame-driven UI (graph, stats, overlay text) — uses the segment's frameIdx
+      renderFrame(seg.frameIdx, /*skipMcPanel=*/ true, newOpacity, inRefactorPause);
+
+      // Objective playhead: smoothly interpolate chart x within seg.
+      // Seg K's video sweeps chart x from previous seg's _chartX (or 0
+      // for the first seg) to this seg's _chartX as tInSeg goes 0 → D.
+      // Frames between segments (no video) are crossed during the sweep.
+      const segIdx = SEGMENTS.indexOf(seg);
+      const startChartX = segIdx === 0 ? 0
+        : DATA.frames[SEGMENTS[segIdx - 1].frameIdx]._chartX;
+      const endChartX = DATA.frames[seg.frameIdx]._chartX;
+      const chartXFrac = startChartX + (tInSeg / seg.dur) * (endChartX - startChartX);
+      updateObjPlayheadFloat(chartXFrac);
+
+      // Video overlay iter label: align with the chart's playhead. Round
+      // to the nearest integer iter mark — chartXFrac=0.5 reads "iter 1"
+      // (= "currently doing 1st attempt"), 1.5 → "iter 2", etc.
+      const overlayIter = Math.max(0, Math.round(chartXFrac));
+      d3.select("#mc-iter").text(`iter ${overlayIter}`);
+
+      // YouTube-style time display: current / total
+      const timeCur = document.getElementById("time-current");
+      if (timeCur) timeCur.textContent = formatTime(t);
+    }
+
+    // ============== Setup graph SVG ==============
+    function setupGraphSVG() {
+      const svg = d3.select("#graph-svg");
+      svg.attr("viewBox", `0 0 ${GW} ${GH}`);   // dynamic — accommodates 3 columns
+      svg.selectAll("*").remove();
+      // Defs: radial gradient for the skill-area backdrop.
+      const defs = svg.append("defs");
+      const grad = defs.append("radialGradient")
+        .attr("id", "skillBgGrad")
+        .attr("cx", "50%").attr("cy", "50%").attr("r", "65%");
+      grad.append("stop").attr("offset", "0%")
+        .attr("stop-color", "#ece3d2").attr("stop-opacity", 0.85);
+      grad.append("stop").attr("offset", "70%")
+        .attr("stop-color", "#f3ebd9").attr("stop-opacity", 0.35);
+      grad.append("stop").attr("offset", "100%")
+        .attr("stop-color", "#f5efe2").attr("stop-opacity", 0);
+      // Backdrop highlighting the LEARNED SKILL NETWORK area (subtle radial glow).
+      const bgPad = 24;
+      svg.append("rect").attr("class", "skill-area-bg")
+        .attr("x", SKILL_X_LEFT - bgPad).attr("y", G_TOP_PAD - bgPad)
+        .attr("width", SKILL_X_RIGHT - SKILL_X_LEFT + bgPad * 2)
+        .attr("height", GH - G_TOP_PAD - G_BOTTOM_PAD + bgPad * 2)
+        .attr("rx", 18).attr("ry", 18);
+      // Two column dividers — APIs | Primitives | Skills
+      svg.append("line").attr("class", "column-divider")
+        .attr("x1", (API_X + PRIM_X) / 2).attr("x2", (API_X + PRIM_X) / 2)
+        .attr("y1", 18).attr("y2", GH - 8);
+      svg.append("line").attr("class", "column-divider")
+        .attr("x1", (PRIM_X + SKILL_X_LEFT) / 2).attr("x2", (PRIM_X + SKILL_X_LEFT) / 2)
+        .attr("y1", 18).attr("y2", GH - 8);
+      // Three column labels
+      svg.append("text").attr("class", "column-label-top")
+        .attr("x", API_X).attr("y", 14).attr("text-anchor", "middle")
+        .text("MINEFLAYER APIs");
+      svg.append("text").attr("class", "column-label-top")
+        .attr("x", PRIM_X).attr("y", 14).attr("text-anchor", "middle")
+        .text("CONTROL PRIMITIVES");
+      svg.append("text").attr("class", "column-label-top")
+        .attr("x", (SKILL_X_LEFT + SKILL_X_RIGHT) / 2).attr("y", 14).attr("text-anchor", "middle")
+        .text("LEARNED SKILL NETWORK");
+      edgesGroup = svg.append("g").attr("class", "edges");
+      nodesGroup = svg.append("g").attr("class", "nodes");
+    }
+
+    function layoutAPIs() {
+      const apis = MINEFLAYER_APIS;
+      const innerH = GH - G_TOP_PAD - G_BOTTOM_PAD;
+      const yStart = G_TOP_PAD;
+      const yStep = apis.length > 1 ? innerH / (apis.length - 1) : 0;
+      apis.forEach((api, i) => {
+        apiPositions[api.name] = { x: API_X, y: yStart + i * yStep };
+      });
+    }
+
+    function layoutPrimitives() {
+      const prims = DATA.primitives;
+      const innerH = GH - G_TOP_PAD - G_BOTTOM_PAD;
+      const yStart = G_TOP_PAD;
+      const step = innerH / Math.max(prims.length - 1, 1);
+      prims.forEach((p, i) => primPositions[p.name] = { x: PRIM_X, y: yStart + i * step });
+    }
+
+    function clusterXBias(cluster, fanIn) {
+      const bias = {
+        "Foundational helpers": 0.05, "Resource gathering": 0.30,
+        "Crafting primitives":  0.55, "Composite tooling": 0.80,
+        "Spatial / placement":  0.65, "Other": 0.40,
+      }[cluster] ?? 0.5;
+      const hubAdjust = -Math.min(fanIn, 8) * 0.015;
+      return Math.max(0, Math.min(1, bias + hubAdjust));
+    }
+
+    function layoutSkillsViaForce() {
+      const skills = DATA.final_skills;
+      const links = [];
+      const lastFrame = DATA.frames[DATA.frames.length - 1];
+      lastFrame.edges_skill_skill.forEach(([s, t]) => {
+        if (skills.find(x => x.name === s) && skills.find(x => x.name === t)) {
+          links.push({ source: s, target: t });
+        }
+      });
+      const nodes = skills.map(s => ({
+        id: s.name, cluster: s.cluster, first_iter: s.first_iter,
+        v: s.v, fan_in: s.fan_in,
+        x: SKILL_X_LEFT + (SKILL_X_RIGHT - SKILL_X_LEFT) * clusterXBias(s.cluster, s.fan_in),
+        y: G_TOP_PAD + Math.random() * (GH - G_TOP_PAD - G_BOTTOM_PAD - 20),
+      }));
+      const sim = d3.forceSimulation(nodes)
+        .force("link", d3.forceLink(links).id(d => d.id).distance(36).strength(0.32))
+        .force("charge", d3.forceManyBody().strength(-160))
+        .force("collide", d3.forceCollide().radius(d => 7 + d.fan_in * 1.3))
+        .force("x", d3.forceX(d => SKILL_X_LEFT + (SKILL_X_RIGHT - SKILL_X_LEFT) * clusterXBias(d.cluster, d.fan_in)).strength(0.18))
+        .force("y", d3.forceY(GH / 2).strength(0.05))
+        .stop();
+      for (let i = 0; i < 320; i++) sim.tick();
+      nodes.forEach(n => {
+        n.x = Math.max(SKILL_X_LEFT - 18, Math.min(SKILL_X_RIGHT + 18, n.x));
+        n.y = Math.max(G_TOP_PAD + 8, Math.min(GH - G_BOTTOM_PAD - 8, n.y));
+        skillPositions[n.id] = { x: n.x, y: n.y };
+      });
+    }
+
+    function nodeRadius(d, isPrim) {
+      if (isPrim) return 6;
+      return 5 + Math.sqrt(d.fan_in || 0) * 3.0;
+    }
+
+    // ============== Render a single frame ==============
+    /**
+     * @param idx           Frame index in DATA.frames.
+     * @param skipMcPanel   Unused (kept for API compat).
+     * @param newOpacity    Optional 0..1 opacity for skills/edges newly born
+     *                      this iter. Driven by applyTime to ramp 0→1 in the
+     *                      first FADE_IN_S (=1s) of the segment, then hold
+     *                      at 1 — so the user can see the current network
+     *                      state almost immediately at iter start.
+     */
+    /**
+     * Cheap deterministic color from item name — keeps related items
+     * looking similar without hand-mapping every block.
+     */
+    function inventoryItemColor(name) {
+      let h = 0;
+      for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+      const palette = ["#7d4f4f", "#8a7d4f", "#5b8a4f", "#4f6e8a", "#6b5b8a",
+                       "#a36b5b", "#8a7a4f", "#5b9b9b", "#a3886b"];
+      return palette[h % palette.length];
+    }
+    /**
+     * Walk the current frame's bot_events list (= real PSN bot events
+     * extracted from ckpt/events/<task>_<ts>, with absolute trimmed-video
+     * time `out_t` per event) up to the playhead's current time WITHIN
+     * the segment. Returns the most recent inventory snapshot + chat
+     * backlog.
+     *
+     * tInSeg is the playhead's seconds-into-current-segment, which is the
+     * same coordinate as out_t (both measure trimmed-video time within
+     * the current iter's MP4).
+     */
+    function eventsUpTo(frame, tInSeg) {
+      const evs = (frame && frame.bot_events) || [];
+      let inv = null;
+      const chats = [];
+      for (const e of evs) {
+        if ((e.out_t ?? 0) > tInSeg) break;
+        if (e.inventory !== undefined) inv = e.inventory;
+        if (e.kind === "onChat" && e.chat) chats.push({ t: e.out_t, chat: e.chat });
+      }
+      return { inv, chats };
+    }
+    function renderInventoryOverlay(frame, tInSeg) {
+      const panel = document.getElementById("mc-inventory");
+      if (!panel) return;
+      const { inv } = eventsUpTo(frame, tInSeg);
+      // Fall back to the per-iter snapshot if no real event stream covers
+      // this frame (e.g. frames whose task has no events file).
+      const items = Object.entries(inv ?? frame.inventory ?? {})
+        .filter(([_, n]) => n > 0);
+      if (!items.length) {
+        panel.innerHTML = `<span class="mc-inv-empty">inventory empty</span>`;
+        return;
+      }
+      panel.innerHTML = items.map(([name, count]) => {
+        const c = inventoryItemColor(name);
+        return `<span class="mc-inv-row">
+          <span class="mc-inv-icon" style="background:${c}"></span>
+          <span class="mc-inv-name">${name}</span>
+          <span class="mc-inv-count">×${count}</span>
+        </span>`;
+      }).join("");
+    }
+    function renderChatOverlay(frame, tInSeg) {
+      const panel = document.getElementById("mc-chat");
+      if (!panel) return;
+      const { chats } = eventsUpTo(frame, tInSeg);
+      if (!chats.length) {
+        panel.innerHTML = `<div class="mc-chat-line is-task" style="opacity:0.55">no chat events</div>`;
+        return;
+      }
+      // Render all eligible chat lines. The panel is flex-column with
+      // justify-content:flex-end + overflow-y:auto, so the newest line
+      // is always pinned at the bottom (Minecraft-style) and earlier
+      // lines scroll up off-screen but remain reachable via mousewheel.
+      // We auto-scroll to the bottom on every render so playback always
+      // shows the freshest line — but only if the user isn't actively
+      // scrolled up viewing earlier history (preserve user intent).
+      const wasAtBottom = (panel.scrollHeight - panel.scrollTop - panel.clientHeight) < 4;
+      panel.innerHTML = chats.map(L => {
+        const tag = L.chat.includes("Success") ? "success"
+                  : L.chat.includes("fail") || L.chat.startsWith("Error") ? "fail"
+                  : L.chat.startsWith("Attempt") || L.chat.includes("starting") ? "task"
+                  : "skill";
+        return `<div class="mc-chat-line is-${tag}">${L.chat}</div>`;
+      }).join("");
+      if (wasAtBottom) panel.scrollTop = panel.scrollHeight;
+    }
+
+    function renderFrame(idx, skipMcPanel, newOpacity, inRefactorPause) {
+      const frame = DATA.frames[idx];
+      const activeSet = new Set(frame.active_skills);
+      const calledPrims = new Set();
+      frame.edges_skill_primitive.forEach(([s, p]) => calledPrims.add(p));
+      const op = (typeof newOpacity === "number") ? newOpacity : 1.0;
+      const currentIter = frame.iteration;
+      // Skills that already existed BEFORE this iter (first_iter < currentIter)
+      // stay at full opacity. Newborn skills (first_iter === currentIter)
+      // fade in over the first ~1s of the segment via `op`.
+      const existedBefore = new Set(
+        DATA.final_skills.filter(s => s.first_iter !== -1 && s.first_iter < currentIter)
+                         .map(s => s.name)
+      );
+      // Action-agent skills born this iter fade in during the iter video.
+      // Per-frame activity sets — pre-computed for use in opacity
+      // helpers below (so inactive nodes/edges can dim instead of going
+      // invisible — Berkeley HKN coursegraph style).
+      const activeSkillSet = new Set(frame.active_skills);
+      // Inactive skill/edge dim factor — keeps the whole network
+      // visible at all times so the reader sees the structure; active
+      // elements just have stronger visual weight (full opacity, glow,
+      // colored halo).
+      const INACTIVE_DIM = 0.40;
+
+      // Refactor-born skills born this iter stay HIDDEN during the iter
+      // video and only fade in during the trailing refactor pause —
+      // matches PSN's reality: refactor runs AFTER the iter's task succeeds.
+      const skillOpacity = (s) => {
+        // Unborn skills (not yet invoked or refactor-created in any
+        // iter <= currentIter) are completely hidden. Aligns with the
+        // node-render filter (line ~1392 `first_iter <= currentIter`)
+        // so edge-visibility logic doesn't draw lines to invisible
+        // nodes — the user's "edges to nothing" complaint at iter 0.
+        if (s.first_iter === -1 || s.first_iter > currentIter) return 0;
+        let baseOp;
+        if (existedBefore.has(s.name)) baseOp = 1.0;
+        else if (s.birth_source === 'refactor') baseOp = inRefactorPause ? op : 0;
+        else baseOp = op;
+        // Clamp inactive skills to INACTIVE_DIM so the whole graph
+        // stays visible. Don't lift below baseOp (newborn fade-in must
+        // still ramp from 0 → INACTIVE_DIM during the first ~1s).
+        if (!activeSkillSet.has(s.name) && baseOp > INACTIVE_DIM) {
+          baseOp = INACTIVE_DIM;
+        }
+        return baseOp;
+      };
+      // ----- edges -----
+      // Per the user's request (Berkeley HKN coursegraph style): the
+      // FULL edge graph is always visible. Active edges (currently
+      // executing this iter) render at full opacity; inactive edges
+      // render at INACTIVE_DIM but remain visible so the network
+      // structure is legible at all times.
+      //
+      // The frame's `edges_skill_skill` / `edges_skill_primitive`
+      // carry only the EXECUTED-this-iter subset (build script filters
+      // them down). For the visible-but-dim render we reconstruct the
+      // FULL graph from `DATA.final_skills`'s `calls_skills` and
+      // `calls_primitives` fields, then mark each edge active iff it
+      // appears in the per-iter executed set.
+      //
+      // Visibility rule for an edge: both endpoints must currently be
+      // *visible* (skillOpacity > 0). This skips edges into
+      // refactor-born skills during the iter video (where they're
+      // hidden) but includes them once the refactor pause shows them.
+      const visibleSkillsArr = DATA.final_skills.filter(s => skillOpacity(s) > 0.001);
+      const visibleSkillNames = new Set(visibleSkillsArr.map(s => s.name));
+
+      const ssActiveKeys = new Set(
+        frame.edges_skill_skill.map(([s, t]) => s + '\t' + t)
+      );
+      const spActiveKeys = new Set(
+        frame.edges_skill_primitive.map(([s, p]) => s + '\t' + p)
+      );
+
+      // During refactor pause, mark refactor-related edges so the
+      // CSS edge-draw animation fires (`is-refactor-new-edge` class).
+      // Two categories of "new" edges:
+      //   (a) INCOMING — participants → created skill (the immediate
+      //       input → output of the refactor)
+      //   (b) OUTGOING — created skill → its callees (skills AND
+      //       primitives). The newly-extracted/merged skill is itself
+      //       new to the graph, so all of its outgoing edges are also
+      //       new and should animate alongside the node fade-in.
+      // Without (b), e.g. craftTool's edges to ensureLogs /
+      // setupCraftingTable / craftItem just snap into existence as
+      // craftTool fades in — visually they "appear" rather than
+      // "draw" along with the rest of the refactor.
+      const refactorNewEdgeKeys = new Set();      // sk→sk
+      const refactorNewSpEdgeKeys = new Set();    // sk→prim
+      const participantSet = new Set();
+      const createdSet = new Set();
+      const extraSsKeys = new Set();   // refactor edges not in graph.json
+      if (inRefactorPause) {
+        const segPause = (typeof findSegment === 'function') ? findSegment(playbackT) : null;
+        const refs = (segPause && segPause.refactors) ? segPause.refactors : [];
+        for (const r of refs) {
+          (r.participants || []).forEach(p => participantSet.add(p));
+          (r.created || []).forEach(c => createdSet.add(c));
+          const newSkills = (r.created && r.created.length > 0)
+            ? r.created
+            : (r.target ? [r.target] : []);
+          // (a) Incoming: participants → newSkills
+          for (const tgt of newSkills) {
+            for (const src of (r.participants || [])) {
+              if (src === tgt) continue;
+              const key = src + '\t' + tgt;
+              refactorNewEdgeKeys.add(key);
+              extraSsKeys.add(key);
+            }
+          }
+          // (b) Outgoing: newSkill → its callees (skills + primitives)
+          for (const newSkill of newSkills) {
+            const meta = DATA.final_skills.find(s => s.name === newSkill);
+            if (!meta) continue;
+            for (const callee of (meta.calls_skills || [])) {
+              if (callee === newSkill) continue;
+              refactorNewEdgeKeys.add(newSkill + '\t' + callee);
+            }
+            for (const prim of (meta.calls_primitives || [])) {
+              refactorNewSpEdgeKeys.add(newSkill + '\t' + prim);
+            }
+          }
+        }
+      }
+
+      // Build full skill→skill edge set from the FRAME's per-iter
+      // structural edges (not final_skills.calls_skills, which only
+      // reflects the FINAL post-refactor code and gives wrong edges
+      // for any pre-refactor iter — e.g. craftWoodenTool's v1.0.0
+      // calls craftItem + ensureLogs, but its final delegate-rewrite
+      // only calls generalCraftTool). The backend's build_hero_data.py
+      // does per-version JS static analysis at each iter and emits the
+      // result into frame.edges_skill_skill, so we trust it here.
+      const ssPairKeys = new Set();
+      const ssEdges = [];
+      const activeSkillSetForEdges = new Set(frame.active_skills);
+      frame.edges_skill_skill.forEach(([parentName, childName]) => {
+        if (!visibleSkillNames.has(parentName) || !visibleSkillNames.has(childName)) return;
+        if (!skillPositions[parentName] || !skillPositions[childName]) return;
+        const key = parentName + '\t' + childName;
+        if (ssPairKeys.has(key)) return;
+        ssPairKeys.add(key);
+        // Edge is "active this iter" iff BOTH endpoints fired this iter.
+        // (Previously ssActiveKeys derived this from a co-active filter
+        // in the backend; now that frame.edges_skill_skill is structural,
+        // we derive active-ness here from active_skills directly.)
+        const isCoActive = activeSkillSetForEdges.has(parentName) && activeSkillSetForEdges.has(childName);
+        const isActive = isCoActive || refactorNewEdgeKeys.has(key);
+        ssEdges.push({
+          source: parentName, target: childName,
+          active: isActive,
+          isRefactorNew: refactorNewEdgeKeys.has(key),
+          sx: skillPositions[parentName].x, sy: skillPositions[parentName].y,
+          tx: skillPositions[childName].x, ty: skillPositions[childName].y,
+        });
+      });
+      // Pause-only refactor edges that don't exist in graph.json
+      // (e.g., the behavioral edge `setupCraftingTable → craftCraftingTable`
+      // claimed by the refactor record but absent from final graph state).
+      extraSsKeys.forEach(key => {
+        if (ssPairKeys.has(key)) return;
+        const [s, t] = key.split('\t');
+        if (!visibleSkillNames.has(s) || !visibleSkillNames.has(t)) return;
+        if (!skillPositions[s] || !skillPositions[t]) return;
+        ssPairKeys.add(key);
+        ssEdges.push({
+          source: s, target: t,
+          active: true, isRefactorNew: true,
+          sx: skillPositions[s].x, sy: skillPositions[s].y,
+          tx: skillPositions[t].x, ty: skillPositions[t].y,
+        });
+      });
+
+      // Build full skill→primitive edge set: every visible skill's
+      // calls_primitives. Active iff in the per-iter executed set
+      // (i.e., source skill is in active_skills AND statically calls
+      // this primitive — equivalent to membership in spActiveKeys).
+      // Skill→primitive edges from frame.edges_skill_primitive
+      // (per-iter, version-aware — same reasoning as ss edges above).
+      const spEdges = [];
+      const spPairKeys = new Set();
+      frame.edges_skill_primitive.forEach(([skillName, prim]) => {
+        if (!visibleSkillNames.has(skillName)) return;
+        if (!skillPositions[skillName] || !primPositions[prim]) return;
+        const key = skillName + '\t' + prim;
+        if (spPairKeys.has(key)) return;
+        spPairKeys.add(key);
+        // Active iff the source skill fired this iter.
+        const isCoActive = activeSkillSetForEdges.has(skillName);
+        const isActive = isCoActive || refactorNewSpEdgeKeys.has(key);
+        spEdges.push({
+          source: skillName, target: prim,
+          active: isActive,
+          sx: skillPositions[skillName].x, sy: skillPositions[skillName].y,
+          tx: primPositions[prim].x, ty: primPositions[prim].y,
+        });
+      });
+      // API → primitive edges. Always present (APIs are static), but
+       // highlighted (full opacity) only when their primitive is currently
+       // called by an active skill in this frame.
+      const apEdges = [];
+      MINEFLAYER_APIS.forEach(api => {
+        Object.entries(PRIMITIVE_API_MAP).forEach(([prim, apis]) => {
+          if (!apis.includes(api.name)) return;
+          if (!apiPositions[api.name] || !primPositions[prim]) return;
+          apEdges.push({
+            source: api.name, target: prim,
+            sx: apiPositions[api.name].x, sy: apiPositions[api.name].y,
+            tx: primPositions[prim].x,    ty: primPositions[prim].y,
+            active: calledPrims.has(prim),
+          });
+        });
+      });
+      // (activeSkillSet defined above, near the opacity helpers, so
+      // skillOpacity/edgeOpacity can reference it.)
+
+      const ap = edgesGroup.selectAll(".edge.api-primitive")
+        .data(apEdges, d => `${d.source}-${d.target}`);
+      ap.exit().transition().duration(180).style("opacity", 0).remove();
+      ap.enter().append("line")
+        .attr("class", "edge api-primitive")
+        .attr("x1", d => d.sx).attr("y1", d => d.sy)
+        .attr("x2", d => d.tx).attr("y2", d => d.ty)
+        .merge(ap)
+        .classed("is-active",   d => d.active)
+        .classed("is-inactive", d => !d.active);
+
+      const ss = edgesGroup.selectAll(".edge.skill-skill")
+        .data(ssEdges, d => `${d.source}-${d.target}`);
+      ss.exit().transition().duration(180).style("opacity", 0).remove();
+      ss.enter().append("line")
+        .attr("class", "edge skill-skill")
+        .attr("x1", d => d.sx).attr("y1", d => d.sy)
+        .attr("x2", d => d.tx).attr("y2", d => d.ty)
+        .merge(ss)
+        .attr("x1", d => d.sx).attr("y1", d => d.sy)
+        .attr("x2", d => d.tx).attr("y2", d => d.ty)
+        // Opacity comes from CSS (`.edge.is-active.skill-skill`
+        // stroke-opacity 0.95 vs `.edge.is-inactive` 0.32). No inline
+        // multiplier — earlier inline INACTIVE_DIM (0.4) was multiplying
+        // CSS stroke-opacity (0.32) → effective 0.128, which was too
+        // faint for inactive sk→sk edges to be visible.
+        .classed("is-active",   d => d.active)
+        .classed("is-inactive", d => !d.active)
+        // Edges added by the current refactor draw-animate over 0.6s
+        // (CSS keyframes `edge-draw`). Class is added by `attr` so the
+        // CSS animation re-fires when we re-enter the pause segment.
+        .classed("is-refactor-new-edge", d => !!d.isRefactorNew)
+        // Length-matched dasharray + dashoffset so the edge-draw
+        // animation produces one continuous growing line. A fixed CSS
+        // value (e.g. 200) creates a repeating dash pattern on longer
+        // lines → visible disconnects mid-animation.
+        .style("stroke-dasharray", d => {
+          if (!d.isRefactorNew) return null;
+          return String(Math.hypot(d.tx - d.sx, d.ty - d.sy));
+        })
+        .style("stroke-dashoffset", d => {
+          if (!d.isRefactorNew) return null;
+          return String(Math.hypot(d.tx - d.sx, d.ty - d.sy));
+        });
+      const sp = edgesGroup.selectAll(".edge.skill-primitive")
+        .data(spEdges, d => `${d.source}-${d.target}`);
+      sp.exit().transition().duration(180).style("opacity", 0).remove();
+      sp.enter().append("line")
+        .attr("class", "edge skill-primitive")
+        .attr("x1", d => d.sx).attr("y1", d => d.sy)
+        .attr("x2", d => d.tx).attr("y2", d => d.ty)
+        .merge(sp)
+        // Same fix as ss: opacity from CSS only (active stroke-opacity
+        // 0.92, inactive 0.32). The previous inline INACTIVE_DIM
+        // multiplier left inactive sk→prim edges effectively invisible
+        // (0.4 × 0.32 = 0.128) — user reported "看不到" the dim edges
+        // from inactive skills to their primitives.
+        .classed("is-active",   d => d.active)
+        .classed("is-inactive", d => !d.active)
+        // Same refactor-cascade animation as ss edges: created skills'
+        // outgoing primitive edges (e.g., craftTool → craftItem) are
+        // also "new" to the graph during the pause and animate-draw.
+        .classed("is-refactor-new-edge",
+                 d => refactorNewSpEdgeKeys.has(d.source + '\t' + d.target))
+        // Length-matched dasharray + dashoffset (see ss above for why).
+        .style("stroke-dasharray", d => {
+          if (!refactorNewSpEdgeKeys.has(d.source + '\t' + d.target)) return null;
+          return String(Math.hypot(d.tx - d.sx, d.ty - d.sy));
+        })
+        .style("stroke-dashoffset", d => {
+          if (!refactorNewSpEdgeKeys.has(d.source + '\t' + d.target)) return null;
+          return String(Math.hypot(d.tx - d.sx, d.ty - d.sy));
+        });
+
+      // ----- nodes -----
+      const primData = DATA.primitives.map(p => ({...p, called: calledPrims.has(p.name)}));
+      const primSel = nodesGroup.selectAll(".node.primitive").data(primData, d => d.name);
+      const primEnter = primSel.enter().append("g").attr("class", "node primitive")
+        .attr("transform", d => `translate(${primPositions[d.name].x},${primPositions[d.name].y})`)
+        .on("mouseenter", (e, d) => {
+          showTooltipPrim(e, d);
+          applyFocusState(computeFocusSubgraph(d.name, 'primitive'), d.name, 'primitive');
+        })
+        .on("mouseleave", () => { hideTooltip(); applyFocusState(null); });
+      primEnter.append("circle").attr("r", d => nodeRadius(d, true)).attr("fill", d => d.color);
+      primEnter.append("text")
+        .attr("dx", -10).attr("dy", 3).attr("text-anchor", "end")
+        .attr("font-size", "8px").attr("fill", "#5b6770").attr("font-weight", "500")
+        .text(d => d.name);
+      const primMerged = primSel.merge(primEnter);
+      primMerged.select("circle").transition().duration(200)
+        .attr("opacity", d => d.called ? 1.0 : 0.35);
+      primMerged
+        .classed("is-active",   d => d.called)
+        .classed("is-inactive", d => !d.called);
+
+      // ----- API nodes (mineflayer) — leftmost column -----
+      const apiData = MINEFLAYER_APIS.map(api => {
+        // API is "called" if any of the primitives that wrap it is called this frame
+        const isCalled = Object.entries(PRIMITIVE_API_MAP)
+          .some(([p, list]) => list.includes(api.name) && calledPrims.has(p));
+        return {
+          ...api,
+          called: isCalled,
+          color: API_CLUSTER_COLORS[api.cluster] || "#888",
+        };
+      });
+      const apiSel = nodesGroup.selectAll(".node.api").data(apiData, d => d.name);
+      const apiEnter = apiSel.enter().append("g").attr("class", "node api")
+        .attr("transform", d => `translate(${apiPositions[d.name].x},${apiPositions[d.name].y})`)
+        .on("mouseenter", (e, d) => {
+          showTooltipApi(e, d);
+          applyFocusState(computeFocusSubgraph(d.name, 'api'), d.name, 'api');
+        })
+        .on("mouseleave", () => { hideTooltip(); applyFocusState(null); });
+      apiEnter.append("circle").attr("r", 4).attr("fill", d => d.color)
+        .attr("stroke", "#fff").attr("stroke-width", 1);
+      apiEnter.append("text")
+        .attr("dx", -8).attr("dy", 3).attr("text-anchor", "end")
+        .attr("font-size", "8px").attr("fill", "#5b6770").attr("font-weight", "500")
+        .text(d => d.name);
+      const apiMerged = apiSel.merge(apiEnter);
+      apiMerged.select("circle").transition().duration(200)
+        .attr("opacity", d => d.called ? 1.0 : 0.35);
+      apiMerged
+        .classed("is-active",   d => d.called)
+        .classed("is-inactive", d => !d.called);
+
+      const skillsActive = DATA.final_skills.filter(s => s.first_iter !== -1 && s.first_iter <= currentIter);
+      const skillSel = nodesGroup.selectAll(".node.skill").data(skillsActive, d => d.name);
+      skillSel.exit().transition().duration(180).attr("opacity", 0).remove();
+      const skillEnter = skillSel.enter().append("g").attr("class", "node skill")
+        .attr("transform", d => `translate(${skillPositions[d.name].x},${skillPositions[d.name].y})`)
+        .style("opacity", 0)
+        .on("mouseenter", (e, d) => {
+          showTooltipSkill(e, d);
+          applyFocusState(computeFocusSubgraph(d.name, 'skill'), d.name, 'skill');
+        })
+        .on("mouseleave", () => { hideTooltip(); applyFocusState(null); });
+      // Halo (soft glow behind the node)
+      skillEnter.append("circle").attr("class", "skill-halo")
+        .attr("r", d => nodeRadius(d, false) * 2.6)
+        .attr("fill", d => d.color);
+      // Main node
+      skillEnter.append("circle").attr("class", "skill-core")
+        .attr("r", d => nodeRadius(d, false))
+        .attr("fill", d => d.color);
+      // Skill name label below the node
+      skillEnter.append("text").attr("class", "skill-label")
+        .attr("dy", d => nodeRadius(d, false) + 12)
+        .text(d => d.name);
+      // Skills that existed BEFORE this iter stay at opacity 1; new-in-iter
+      // skills fade in with segProgress (this is what gives the network its
+      // moment-by-moment evolution feel during video playback).
+      skillEnter.merge(skillSel)
+        .attr("transform", d => `translate(${skillPositions[d.name].x},${skillPositions[d.name].y})`)
+        .style("opacity", d => skillOpacity(d))
+        .classed("is-active",   d => activeSkillSet.has(d.name))
+        .classed("is-inactive", d => !activeSkillSet.has(d.name))
+        .classed("is-refactor-born", d => d.birth_source === 'refactor')
+        // During a refactor pause: highlight contributing source skills
+        // (callers / siblings) with a yellow halo so the eye sees the
+        // N-to-1 consolidation visually.
+        .classed("is-refactor-source",
+                 d => participantSet.has(d.name) && !createdSet.has(d.name));
+
+      // ----- minecraft panel overlay text (video + img toggling is handled
+      //       by applyTime() which is the single source of truth) -----
+      // Note: #mc-iter is set in applyTime based on the playhead's chart x
+      // (so it sweeps continuously through iter N values within each video
+      // segment) — don't overwrite it here.
+      d3.select("#mc-task").text(frame.task || "—");
+
+      // ----- inventory & chat overlays (hidden until user toggles 🎒/💬) -----
+      // Use the playhead's seconds-into-current-segment as the lookup key
+      // — bot_events' `out_t` is already in the same trimmed-video time
+      // coordinate (mapped at data-prep time via the trim sidecar).
+      const segNow = SEGMENTS && SEGMENTS.length ? findSegment(playbackT) : null;
+      const tInSeg = segNow ? Math.max(0, playbackT - segNow.tStart) : 0;
+      renderInventoryOverlay(frame, tInSeg);
+      renderChatOverlay(frame, tInSeg);
+
+      // ----- stats / timeline ----
+      d3.select("#stat-skills").text(frame.n_active_skills);
+      d3.select("#stat-edges").text(frame.n_edges_skill_skill);
+      d3.select("#stat-task").text(frame.task || "—");
+      const obj = frame.objectives;
+      if (obj) {
+        d3.select("#stat-rtask").text(obj.R_task.toFixed(2));
+        d3.select("#stat-rstruct").text(obj.R_struct.toFixed(3));
+        d3.select("#stat-j").text(obj.J.toFixed(3));
+      }
+      // (timeline-info text is set by applyTime — this used to overwrite it)
+    }
+
+    // ============== Objective curves ==============
+    let objLineFns = {};
+    let objX = null;
+    let playheadLine = null;
+
+    function setupObjPanel() {
+      const W = 1340, H = 180, M = { top: 12, right: 14, bottom: 22, left: 38 };
+      const innerW = W - M.left - M.right;
+      const innerH = H - M.top - M.bottom;
+      const svg = d3.select("#obj-svg");
+      svg.selectAll("*").remove();
+      const g = svg.append("g").attr("transform", `translate(${M.left},${M.top})`);
+
+      // Chart x = iter index. iter 0 → x=0, iter N → x=N. Curves start
+      // at iter 0's actual PSN values (no fake "anchor at (0, 0)" prefix).
+      const xs = DATA.frames.map(f => f._chartX).filter(x => x !== undefined);
+      const xMin = 0;
+      const xMax = Math.max(...xs);
+      objX = d3.scaleLinear().domain([xMin, xMax]).range([0, innerW]);
+      const objY = d3.scaleLinear().domain([0, 1.05]).range([innerH, 0]);
+
+      // Tick at every integer iter (0, 1, 2, ...) up to the max.
+      const intTicks = [];
+      for (let t = 0; t <= Math.floor(xMax); t++) intTicks.push(t);
+      g.append("g").attr("class", "obj-axis")
+        .attr("transform", `translate(0,${innerH})`)
+        .call(d3.axisBottom(objX).tickValues(intTicks).tickSizeOuter(0)
+                .tickFormat(d3.format("d")));
+      g.append("g").attr("class", "obj-axis")
+        .call(d3.axisLeft(objY).ticks(5).tickSizeOuter(0));
+
+      // Lines for each objective. Each curve is anchored at (0, 0) =
+      // "before any iter completed" (no skill executed yet → all R=0),
+      // then PSN's per-iter values follow at x=1, 2, …, N. So x=K on
+      // the chart reads as "after K iters completed".
+      const keys = ["R_task", "R_reliab", "R_struct", "R_cons", "J"];
+      keys.forEach(k => {
+        const data = [{ x: 0, y: 0 }];
+        DATA.frames
+          .filter(f => f.objectives && f.objectives[k] !== undefined)
+          .forEach(f => data.push({ x: f._chartX, y: f.objectives[k] }));
+        const line = d3.line().x(d => objX(d.x)).y(d => objY(d.y)).curve(d3.curveMonotoneX);
+        g.append("path")
+          .datum(data)
+          .attr("class", `obj-line ${k}`)
+          .attr("stroke", OBJ_COLORS[k])
+          .attr("d", line);
+      });
+
+      // Playhead (vertical line moving with current frame)
+      playheadLine = g.append("line")
+        .attr("class", "obj-playhead")
+        .attr("y1", 0).attr("y2", innerH)
+        .attr("x1", 0).attr("x2", 0);
+
+      // X axis label
+      svg.append("text")
+        .attr("x", W / 2).attr("y", H - 4)
+        .attr("text-anchor", "middle")
+        .style("font-size", "10px").style("fill", "var(--muted)")
+        .style("font-family", "JetBrains Mono")
+        .text("iteration");
+    }
+
+    function updateObjPlayhead(idx) {
+      if (!objX || !playheadLine) return;
+      const f = DATA.frames[idx];
+      const x = objX(f._chartX !== undefined ? f._chartX : f.iteration);
+      playheadLine.attr("x1", x).attr("x2", x);
+    }
+
+    // Float-iter version: lets the playhead glide smoothly through fractional
+    // iter positions as the per-iter video plays.
+    function updateObjPlayheadFloat(chartX) {
+      if (!objX || !playheadLine) return;
+      // chartX is the cumulative-attempt frame index (chart x-axis units).
+      const x = objX(chartX);
+      playheadLine.attr("x1", x).attr("x2", x);
+    }
+
+    // ============== Tooltip ==============
+    function showTooltipSkill(event, d) {
+      const tt = d3.select("#tooltip");
+      // Birth-path line — explains how this skill came into being:
+      //   action_agent: synthesized for a new task by the LLM action agent
+      //   refactor:     extracted/merged from existing skills by the
+      //                 refactor pass; show which type + which parent.
+      let birthLine = '';
+      if (d.birth_source === 'refactor') {
+        const dn = REFACTOR_DISPLAY_NAMES_JS[d.birth_refactor_type] || d.birth_refactor_type;
+        birthLine = `<div class="tt-meta" style="color:#c8b8a0">↳ born by ${dn} from ${d.birth_refactor_source}</div>`;
+      } else if (d.birth_source === 'action_agent') {
+        birthLine = `<div class="tt-meta" style="color:#a6c5e5">↳ born by action agent</div>`;
+      }
+      // V(s) shown both as PSN's raw value AND the [0,1]-normalized
+       // form used by the composite-objective chart. Raw is the truth;
+       // normalized is what the R_reliab/J line plots against.
+      const vNormStr = (d.v_norm !== undefined)
+        ? ` &middot; norm = ${d.v_norm.toFixed(3)}` : '';
+      tt.html(`
+        <div class="tt-name">${d.name}</div>
+        <div class="tt-meta">V(s) = ${(d.v ?? 0).toFixed(3)}${vNormStr} &middot; fan-in ${d.fan_in} &middot; first iter ${d.first_iter}</div>
+        ${birthLine}
+        <div class="tt-cluster" style="color: ${d.color}">${d.cluster}</div>
+      `);
+      tt.style("opacity", 1)
+        .style("left", (event.clientX + 14) + "px")
+        .style("top",  (event.clientY + 14) + "px");
+    }
+    function showTooltipApi(event, d) {
+      const tt = d3.select("#tooltip");
+      tt.html(`
+        <div class="tt-name">${d.name}</div>
+        <div class="tt-cluster" style="color: ${d.color}">Mineflayer ${d.cluster}</div>
+      `);
+      tt.style("opacity", 1)
+        .style("left", (event.clientX + 14) + "px")
+        .style("top",  (event.clientY + 14) + "px");
+    }
+    function showTooltipPrim(event, d) {
+      const tt = d3.select("#tooltip");
+      tt.html(`
+        <div class="tt-name">${d.name}</div>
+        <div class="tt-cluster" style="color: ${d.color}">Control primitive — ${d.cluster}</div>
+      `);
+      tt.style("opacity", 1)
+        .style("left", (event.clientX + 14) + "px")
+        .style("top",  (event.clientY + 14) + "px");
+    }
+    function hideTooltip() { d3.select("#tooltip").style("opacity", 0); }
+
+    // ============== Hover-to-focus (Berkeley HKN style) ==============
+    // computeFocusSubgraph: BFS the downstream closure of a hovered node, but
+    // using PER-ITER edges (not DATA.final_skills which represents the post-run
+    // FINAL state of every skill). Previously this walked DATA.final_skills'
+    // calls_skills — at iter 5, that erroneously closed over ensureLogs →
+    // ensureResource (a refactor-extracted helper added at iter 9 that doesn't
+    // exist at iter 5) → craftWoodenTool → ... → 17 unrelated skills, all
+    // highlighted spuriously.
+    //
+    // Right data source: frame.edges_skill_skill + frame.edges_skill_primitive
+    // are computed via per-version static analysis of each skill's code AS
+    // OF that iter's timestamp (build_hero_data.py). They are the ground truth
+    // for "what does skill X actually call AT iter N".
+    function computeFocusSubgraph(rootName, rootKind) {
+      const skills = new Set();
+      const primitives = new Set();
+      const apis = new Set();
+
+      // Resolve current iter's frame via the active segment.
+      const segNow = findSegment(playbackT);
+      const frame = (segNow && DATA.frames[segNow.frameIdx]) || DATA.frames[0];
+
+      // Build per-iter adjacency maps (skill→skill children, skill→primitives)
+      // from frame edges. Bounded by iter's edge count, fast to rebuild on
+      // each hover.
+      const ssAdj = new Map();
+      for (const [u, v] of (frame.edges_skill_skill || [])) {
+        if (!ssAdj.has(u)) ssAdj.set(u, new Set());
+        ssAdj.get(u).add(v);
+      }
+      const spAdj = new Map();
+      for (const [u, p] of (frame.edges_skill_primitive || [])) {
+        if (!spAdj.has(u)) spAdj.set(u, new Set());
+        spAdj.get(u).add(p);
+      }
+
+      if (rootKind === 'skill') {
+        const queue = [rootName];
+        while (queue.length) {
+          const cur = queue.shift();
+          if (skills.has(cur)) continue;
+          skills.add(cur);
+          for (const child of (ssAdj.get(cur) || [])) {
+            if (!skills.has(child)) queue.push(child);
+          }
+          for (const prim of (spAdj.get(cur) || [])) {
+            primitives.add(prim);
+            for (const api of (PRIMITIVE_API_MAP[prim] || [])) {
+              apis.add(api);
+            }
+          }
+        }
+      } else if (rootKind === 'primitive') {
+        primitives.add(rootName);
+        for (const api of (PRIMITIVE_API_MAP[rootName] || [])) {
+          apis.add(api);
+        }
+      } else if (rootKind === 'api') {
+        apis.add(rootName);
+      }
+      return {skills, primitives, apis};
+    }
+
+    // applyFocusState: set INLINE styles to highlight/dim the focus subgraph.
+    //
+    // Why inline styles instead of CSS classes: iter-state dimming uses
+    // INLINE opacity set by renderFrame on:
+    //   - skill <g>          (line ~1825, via .style)
+    //   - primitive <circle> (line ~1788, via .attr)
+    //   - api <circle>       (line ~1820, via .attr)
+    // CSS classes — even with !important on opacity — fight a complex
+    // priority war against these and lose unpredictably depending on
+    // whether the property was set via .style vs .attr. Setting inline
+    // styles directly in applyFocusState guarantees correctness because
+    // inline .style on a child element has highest priority for that
+    // property AND we control its assignment time.
+    //
+    // Clearing (focus=null): we set .style("...", null) which REMOVES
+    // our inline override, falling back to whatever renderFrame set
+    // (the proper iter-state behavior).
+    function applyFocusState(focus, rootName, rootKind) {
+      if (!nodesGroup || !edgesGroup) return;
+
+      const ORANGE = "#f0a040";
+      const ROOT_GLOW = "drop-shadow(0 0 6px rgba(240, 160, 64, 0.6))";
+      const OP_FULL = 1.0, OP_DIM = 0.08;
+      const STROKE_FULL = 0.95, STROKE_DIM = 0.06;
+
+      if (!focus) {
+        // Clear our inline overrides. Pass null to .style to remove.
+        nodesGroup.selectAll(".node").style("opacity", null);
+        nodesGroup.selectAll(".node.primitive circle, .node.api circle")
+          .style("opacity", null)
+          .style("stroke", null).style("stroke-width", null)
+          .style("filter", null);
+        nodesGroup.selectAll(".skill-core")
+          .style("stroke", null).style("stroke-width", null)
+          .style("filter", null);
+        nodesGroup.selectAll(".skill-halo")
+          .style("fill-opacity", null);
+        edgesGroup.selectAll(".edge").style("stroke-opacity", null)
+          .style("filter", null);
+        return;
+      }
+
+      // Skills (group-level opacity + skill-halo/skill-core sub-styling)
+      nodesGroup.selectAll(".node.skill").each(function(d) {
+        const inFocus = focus.skills.has(d.name);
+        const isRoot = rootKind === 'skill' && d.name === rootName;
+        const sel = d3.select(this);
+        sel.style("opacity", inFocus ? OP_FULL : OP_DIM);
+        sel.select(".skill-halo")
+          .style("fill-opacity", inFocus ? 0.5 : 0);
+        sel.select(".skill-core")
+          .style("stroke", isRoot ? ORANGE : null)
+          .style("stroke-width", isRoot ? "2.5" : null)
+          .style("filter", isRoot ? ROOT_GLOW : (inFocus ? null : "none"));
+      });
+
+      // Primitives (opacity + stroke on the <circle>)
+      nodesGroup.selectAll(".node.primitive").each(function(d) {
+        const inFocus = focus.primitives.has(d.name);
+        const isRoot = rootKind === 'primitive' && d.name === rootName;
+        d3.select(this).select("circle")
+          .style("opacity", inFocus ? OP_FULL : OP_DIM)
+          .style("stroke", isRoot ? ORANGE : null)
+          .style("stroke-width", isRoot ? "2.5" : null)
+          .style("filter", isRoot ? ROOT_GLOW : (inFocus ? null : "none"));
+      });
+
+      // APIs
+      nodesGroup.selectAll(".node.api").each(function(d) {
+        const inFocus = focus.apis.has(d.name);
+        const isRoot = rootKind === 'api' && d.name === rootName;
+        d3.select(this).select("circle")
+          .style("opacity", inFocus ? OP_FULL : OP_DIM)
+          .style("stroke", isRoot ? ORANGE : null)
+          .style("stroke-width", isRoot ? "2.5" : null)
+          .style("filter", isRoot ? ROOT_GLOW : (inFocus ? null : "none"));
+      });
+
+      // Edges. d.source/target are name strings on all three edge types.
+      // For each focus-in edge, we need to bump stroke-width AND color
+      // AND clear dasharray — bumping opacity alone leaves sk→prim and
+      // api→prim edges (base width 0.7, dotted) effectively invisible
+      // because they're thin diagonals that get visually buried under
+      // the busy graph. Use the same color/width as the .is-active
+      // styling so focused edges read like "current execution" edges.
+      const styleFocusEdge = (sel, kind, inFocus) => {
+        if (inFocus) {
+          // Match the active-edge styling at lines 322-339
+          if (kind === "ss") {
+            sel.style("stroke", "#2c3338")
+               .style("stroke-width", "2.4")
+               .style("stroke-opacity", STROKE_FULL)
+               .style("stroke-dasharray", "none")
+               .style("filter", null);
+          } else if (kind === "sp") {
+            sel.style("stroke", "#8b6f4e")
+               .style("stroke-width", "1.6")
+               .style("stroke-opacity", STROKE_FULL)
+               .style("stroke-dasharray", "none")
+               .style("filter", null);
+          } else if (kind === "ap") {
+            sel.style("stroke", "#6b5640")
+               .style("stroke-width", "1.4")
+               .style("stroke-opacity", STROKE_FULL)
+               .style("stroke-dasharray", "none")
+               .style("filter", null);
+          }
+        } else {
+          sel.style("stroke", null)
+             .style("stroke-width", null)
+             .style("stroke-opacity", STROKE_DIM)
+             .style("stroke-dasharray", null)
+             .style("filter", "none");
+        }
+      };
+      edgesGroup.selectAll(".edge.skill-skill").each(function(d) {
+        const inFocus = focus.skills.has(d.source) && focus.skills.has(d.target);
+        styleFocusEdge(d3.select(this), "ss", inFocus);
+      });
+      edgesGroup.selectAll(".edge.skill-primitive").each(function(d) {
+        const inFocus = focus.skills.has(d.source) && focus.primitives.has(d.target);
+        styleFocusEdge(d3.select(this), "sp", inFocus);
+      });
+      edgesGroup.selectAll(".edge.api-primitive").each(function(d) {
+        const inFocus = focus.apis.has(d.source) && focus.primitives.has(d.target);
+        styleFocusEdge(d3.select(this), "ap", inFocus);
+      });
+    }
+
+    // Browser playbackRate caps differ: Chrome [0.0625, 16], Firefox up to 32+,
+    // Safari historically ≤2. Setting an out-of-range rate throws
+    // NotSupportedError. setSafePlaybackRate clamps down through known-safe
+    // values so the UI never errors when a high speed is selected.
+    function setSafePlaybackRate(videoEl, requested) {
+      for (const r of [requested, 16, 8, 4, 2, 1]) {
+        try { videoEl.playbackRate = r; return r; } catch (_) {}
+      }
+      return null;
+    }
+
+    // ============== Controls (continuous-time) ==============
+    function setupControls() {
+      const slider = document.getElementById("iter-slider");
+      slider.min = 0;
+      slider.max = TOTAL_DURATION;
+      slider.step = 0.05;
+      slider.value = 0;
+
+      // Chat / inventory toggles. Each button flips the matching overlay's
+      // `hidden` attribute and toggles its own `is-on` class for the
+      // orange-tint affordance. Default: both off.
+      const chatBtn   = document.getElementById("chat-toggle");
+      const invBtn    = document.getElementById("inv-toggle");
+      const chatPanel = document.getElementById("mc-chat");
+      const invPanel  = document.getElementById("mc-inventory");
+      chatBtn.addEventListener("click", () => {
+        const on = chatPanel.hasAttribute("hidden");
+        if (on) chatPanel.removeAttribute("hidden");
+        else    chatPanel.setAttribute("hidden", "");
+        chatBtn.classList.toggle("is-on", on);
+      });
+      invBtn.addEventListener("click", () => {
+        const on = invPanel.hasAttribute("hidden");
+        if (on) invPanel.removeAttribute("hidden");
+        else    invPanel.setAttribute("hidden", "");
+        invBtn.classList.toggle("is-on", on);
+      });
+
+      // Drag tooltip element (lazily created)
+      const wrapper = slider.parentElement;       // .timeline-slider
+      wrapper.style.position = "relative";        // anchor for absolute children
+      let tt = wrapper.querySelector(".slider-tooltip");
+      if (!tt) {
+        tt = document.createElement("div");
+        tt.className = "slider-tooltip";
+        wrapper.appendChild(tt);
+      }
+      const updateSliderTooltip = (t) => {
+        const seg = findSegment(t);
+        if (!seg) return;
+        const fr = DATA.frames[seg.frameIdx];
+        const tInSeg = t - seg.tStart;
+        tt.innerHTML =
+          `<div class="tt-iter">iter ${seg.frameIdx} ${fr.success ? "✓" : "✗"}</div>` +
+          `<div class="tt-task">${fr.task || "—"}</div>` +
+          `<div class="tt-time">${tInSeg.toFixed(1)}s / ${seg.dur}s</div>`;
+        const pct = TOTAL_DURATION > 0 ? (t / TOTAL_DURATION) * 100 : 0;
+        tt.style.left = pct + "%";
+      };
+
+      // Pause-on-grab + resume-on-release UX so dragging doesn't fight the
+      // raf loop's playbackT updates. Using setPointerCapture so pointerup
+      // ALWAYS reaches the slider even if the cursor flies off the thumb
+      // — without it, isDragging could stick at true and the seeked-event
+      // resume never fires.
+      let savedPlaying = false;
+      slider.addEventListener("pointerdown", (e) => {
+        isDragging = true;
+        savedPlaying = isPlaying;
+        try { slider.setPointerCapture(e.pointerId); } catch (_) {}
+        // Hard-stop the raf loop's interference: with isPlaying=false, raf
+        // returns early and won't try to read video.currentTime + write it
+        // back to slider.value while the user drags.
+        isPlaying = false;
+        document.getElementById("mc-video").pause();
+        tt.classList.add("is-visible");
+        updateSliderTooltip(parseFloat(slider.value));
+      });
+      slider.addEventListener("pointerup", (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        try { slider.releasePointerCapture(e.pointerId); } catch (_) {}
+        tt.classList.remove("is-visible");
+        const videoEl = document.getElementById("mc-video");
+        // Force final exact seek (slider.value can lag the last input event).
+        const finalT = parseFloat(slider.value);
+        const seg = findSegment(finalT);
+        const tInSeg = finalT - seg.tStart;
+        playbackT = finalT;
+        // Re-apply UI state so renderFrame / playhead / overlay match finalT.
+        // applyTime may trigger videoEl.src= when seg.url differs from current,
+        // which resets readyState to HAVE_NOTHING.
+        applyTime(finalT, /*sourceFromVideo=*/ false);
+
+        // HAVE_NOTHING (readyState 0) is silent-no-op territory for seeks: per
+        // HTML spec, currentTime= writes when readyState=0 are dropped and
+        // play() will then start from 0 once media loads. If applyTime above
+        // just swapped src=, readyState IS 0 right now and ANY synchronous
+        // currentTime= write here would be silently lost — making the video
+        // restart from iter start instead of finalT. Defer the precise-seek
+        // + resume sequence until the element has loadedmetadata.
+        const issueSeekAndResume = () => {
+          try { videoEl.currentTime = tInSeg; } catch (_) {}
+          console.log("[slider pointerup] finalT=" + finalT.toFixed(2)
+                      + " segIdx=" + SEGMENTS.indexOf(seg)
+                      + " tInSeg=" + tInSeg.toFixed(2)
+                      + " video.currentTime=" + videoEl.currentTime.toFixed(2)
+                      + " seeking=" + videoEl.seeking
+                      + " readyState=" + videoEl.readyState
+                      + " savedPlaying=" + savedPlaying);
+          if (!savedPlaying) return;
+          // Loop until currentTime ACTUALLY reaches tInSeg, then play.
+          //
+          // Why a loop instead of {once: true}: when videoEl.src= just swapped
+          // (which applyTime above may have done), the browser fires its OWN
+          // seeked event for the implicit "seek to initial position 0" that
+          // happens after loadedmetadata. If we listen with {once: true}, we
+          // catch THAT event, not the seeked event for our currentTime=tInSeg
+          // write. tryPlay then runs while currentTime is still 0 and the real
+          // seek to tInSeg is still in progress → play() resumes from 0 →
+          // user sees iter start. Manifests when tInSeg is large (deep seek
+          // needs HTTP range fetch) and OK when tInSeg ≈ 0 (seek completes
+          // before initial-seek event finishes).
+          //
+          // Robust pattern: re-arm the seeked listener (and also poll every
+          // 100ms in case no seeked fires) until currentTime is within
+          // tolerance of tInSeg, then play.
+          const SEEK_TOLERANCE_S = 0.5;
+          const MAX_ATTEMPTS     = 50;          // ~5s of waiting before giving up
+          let attempts           = 0;
+          const checkAndPlay = () => {
+            attempts += 1;
+            if (Math.abs(videoEl.currentTime - tInSeg) <= SEEK_TOLERANCE_S) {
+              isPlaying = true;
+              videoEl.play().catch(() => {});
+              console.log("[slider resume] play from currentTime="
+                          + videoEl.currentTime.toFixed(2)
+                          + " (attempts=" + attempts + ")");
+              return;
+            }
+            if (attempts >= MAX_ATTEMPTS) {
+              console.warn("[slider resume] gave up after " + attempts
+                           + " attempts; currentTime=" + videoEl.currentTime.toFixed(2)
+                           + " target=" + tInSeg.toFixed(2));
+              try { videoEl.currentTime = tInSeg; } catch (_) {}
+              isPlaying = true;
+              videoEl.play().catch(() => {});
+              return;
+            }
+            // Re-issue seek (idempotent if already in flight to same target),
+            // then arm BOTH a seeked listener and a 100ms timer — whichever
+            // fires first triggers the next check. seeked may not fire if the
+            // browser internally completed the previous seek to the same value.
+            try { videoEl.currentTime = tInSeg; } catch (_) {}
+            let fired = false;
+            const onceFire = () => {
+              if (fired) return;
+              fired = true;
+              videoEl.removeEventListener("seeked", onceFire);
+              checkAndPlay();
+            };
+            videoEl.addEventListener("seeked", onceFire);
+            setTimeout(onceFire, 100);
+          };
+          checkAndPlay();
+        };
+        if (videoEl.readyState >= 1 /* HAVE_METADATA */) {
+          issueSeekAndResume();
+        } else {
+          // Media not loaded yet (src just swapped). Wait once for metadata.
+          // Tradeoff: small UX delay (~30-200ms) for unvisited iters —
+          // unavoidable cost of fetching the new mp4. Without this wait,
+          // the seek is silently dropped and playback restarts from iter 0.
+          videoEl.addEventListener("loadedmetadata", issueSeekAndResume, { once: true });
+        }
+      });
+      slider.addEventListener("input", () => {
+        const t = parseFloat(slider.value);
+        applyTime(t, /*sourceFromVideo=*/ false);
+        updateSliderTooltip(t);
+      });
+
+      // Iter boundary markers (rendered as dots over the slider track)
+      let markersDiv = wrapper.querySelector(".iter-markers");
+      if (!markersDiv) {
+        markersDiv = document.createElement("div");
+        markersDiv.className = "iter-markers";
+        wrapper.appendChild(markersDiv);
+      }
+      markersDiv.innerHTML = "";
+      SEGMENTS.forEach((seg, i) => {
+        const m = document.createElement("button");
+        m.className = "iter-marker";
+        const pct = TOTAL_DURATION > 0 ? (seg.tStart / TOTAL_DURATION) * 100 : 0;
+        m.style.left = pct + "%";
+        const fr = DATA.frames[seg.frameIdx];
+        m.title = `iter ${seg.frameIdx}: ${fr.task} (click to jump)`;
+        m.setAttribute("aria-label", `Jump to iter ${seg.frameIdx}`);
+        m.addEventListener("click", () => {
+          applyTime(seg.tStart, false);
+          slider.value = seg.tStart;
+        });
+        markersDiv.appendChild(m);
+      });
+
+      // Play / Pause. YouTube-style "replay" behavior: ONLY when at the very
+      // end of the timeline (within 0.5s of TOTAL_DURATION) does click-play
+      // wrap back to t=0. Mid-timeline click-play resumes from the current
+      // position — pause/resume in the middle works as expected.
+      function togglePlay() {
+        const videoEl = document.getElementById("mc-video");
+        if (isPlaying) {
+          videoEl.pause();
+          isPlaying = false;
+          d3.select("#play-btn").classed("is-playing", false).text("▶");
+        } else {
+          if (playbackT >= TOTAL_DURATION - 0.5) {
+            // We're parked at the end → user clicked play to "replay"
+            applyTime(0, /*sourceFromVideo=*/ false);
+          }
+          isPlaying = true;
+          videoEl.play().catch(() => {});
+          d3.select("#play-btn").classed("is-playing", true).text("❚❚");
+        }
+      }
+      document.getElementById("play-btn").addEventListener("click", togglePlay);
+      // YouTube-style: clicking anywhere on the video area (NOT the player
+      // bar) also toggles play/pause. Excluded zones: the overlay player bar
+      // (so clicking ▶/slider/speed-selector still does its own thing).
+      document.querySelector(".mc-panel").addEventListener("click", (e) => {
+        if (e.target.closest("#player-bar")) return;     // bar handles its own clicks
+        togglePlay();
+      });
+
+      // Playback speed. For low rates (≤4×) we set playbackRate and let the
+      // browser play natively. For high rates (16×, 32×) browsers/h264
+      // decoders silently cap actual playback speed (typically ~4×), so the
+      // raf loop falls back to manual scrubbing — see rafLoop() for details.
+      document.getElementById("speed-selector").addEventListener("change", (e) => {
+        const rate = parseFloat(e.target.value);
+        const videoEl = document.getElementById("mc-video");
+        setSafePlaybackRate(videoEl, rate);
+      });
+
+      // Initialize total-time display + default playback rate (matches the
+      // <select>'s `selected` option). 4× is fast enough to skim the run
+      // without feeling slow; 1×/2× are still available as ↑ slowdowns.
+      document.getElementById("time-total").textContent = formatTime(TOTAL_DURATION);
+      document.getElementById("time-current").textContent = "0:00";
+      const _initSpeed = parseFloat(document.getElementById("speed-selector").value);
+      setSafePlaybackRate(document.getElementById("mc-video"), _initSpeed);
+
+      // YouTube-style auto-hide controller for the overlay player bar
+      setupPlayerBarAutoHide();
+
+      // ============== Composite-objective hover + drag-to-seek ==============
+      const objSvg = document.getElementById("obj-svg");
+      const objPanel = document.querySelector(".obj-panel");
+      objPanel.style.position = "relative";
+      objSvg.style.cursor = "ew-resize";       // visual hint that chart is draggable
+      let ott = objPanel.querySelector(".obj-tooltip");
+      if (!ott) {
+        ott = document.createElement("div");
+        ott.className = "obj-tooltip";
+        objPanel.appendChild(ott);
+      }
+
+      /** Convert mouse event → global playback time (seconds). Returns null
+       *  if the click is outside the chart drawing area. */
+      function objMouseToTime(e) {
+        if (!objX) return null;
+        const rect = objSvg.getBoundingClientRect();
+        const SVG_W = 1340, M_LEFT = 38;
+        const vbX = (e.clientX - rect.left) / rect.width * SVG_W;
+        const innerX = vbX - M_LEFT;
+        if (innerX < 0) return null;
+        const iterFrac = Math.max(0, objX.invert(innerX));
+        return iterFracToGlobalT(iterFrac);
+      }
+
+      let savedPlayingObj = false;
+      objSvg.addEventListener("mousedown", (e) => {
+        const t = objMouseToTime(e);
+        if (t === null) return;
+        e.preventDefault();
+        isDraggingObj = true;
+        savedPlayingObj = isPlaying;
+        isPlaying = false;        // hard-stop raf during drag
+        document.getElementById("mc-video").pause();
+        applyTime(t, /*sourceFromVideo=*/ false);
+      });
+      window.addEventListener("mousemove", (e) => {
+        if (!isDraggingObj) return;
+        const t = objMouseToTime(e);
+        if (t === null) return;
+        applyTime(t, false);
+      });
+      window.addEventListener("mouseup", () => {
+        if (!isDraggingObj) return;
+        isDraggingObj = false;
+        ott.classList.remove("is-visible");
+        if (!savedPlayingObj) return;
+        const videoEl = document.getElementById("mc-video");
+        const seg = findSegment(playbackT);
+        const tInSeg = playbackT - seg.tStart;
+        try { videoEl.currentTime = tInSeg; } catch (_) {}
+        const tryPlay = () => {
+          if (Math.abs(videoEl.currentTime - tInSeg) > 0.5) {
+            try { videoEl.currentTime = tInSeg; } catch (_) {}
+          }
+          isPlaying = true;
+          videoEl.play().catch(() => {});
+        };
+        if (videoEl.seeking) {
+          const onSeeked = () => {
+            videoEl.removeEventListener("seeked", onSeeked);
+            tryPlay();
+          };
+          videoEl.addEventListener("seeked", onSeeked);
+        } else {
+          requestAnimationFrame(tryPlay);
+        }
+      });
+
+      objSvg.addEventListener("mousemove", (e) => {
+        if (!objX) return;
+        const rect = objSvg.getBoundingClientRect();
+        // map client x → svg-viewBox x → invert chart x
+        const SVG_W = 1340, M_LEFT = 38;
+        const vbX = (e.clientX - rect.left) / rect.width * SVG_W;
+        const innerX = vbX - M_LEFT;
+        if (innerX < 0) { ott.classList.remove("is-visible"); return; }
+        const iterFrac = objX.invert(innerX);
+        // Find nearest data point by chart x (handles multi-attempt iters
+        // that share the same iteration but have distinct _chartX positions).
+        let nearest = null, bestDist = Infinity;
+        for (const f of DATA.frames) {
+          if (f._chartX === undefined) continue;
+          const d = Math.abs(f._chartX - iterFrac);
+          if (d < bestDist) { bestDist = d; nearest = f; }
+        }
+        if (!nearest || !nearest.objectives) {
+          ott.classList.remove("is-visible"); return;
+        }
+        const o = nearest.objectives;
+        const displayedIter = nearest._chartX !== undefined ? nearest._chartX : nearest.iteration;
+        ott.innerHTML =
+          `<div class="tt-iter">iter ${displayedIter} · ${nearest.success ? "✓" : "✗"}</div>` +
+          `<div class="tt-task">${(nearest.task || "").slice(0, 50)}</div>` +
+          `<div class="tt-row" style="color:${OBJ_COLORS.J}">J = ${o.J.toFixed(3)}</div>` +
+          `<div class="tt-row" style="color:${OBJ_COLORS.R_task}">R<sub>task</sub> = ${o.R_task.toFixed(2)}</div>` +
+          `<div class="tt-row" style="color:${OBJ_COLORS.R_reliab}">R<sub>reliab</sub> = ${o.R_reliab.toFixed(2)}</div>` +
+          `<div class="tt-row" style="color:${OBJ_COLORS.R_struct}">R<sub>struct</sub> = ${o.R_struct.toFixed(3)}</div>` +
+          `<div class="tt-row" style="color:${OBJ_COLORS.R_cons}">R<sub>cons</sub> = ${o.R_cons.toFixed(2)}</div>`;
+        ott.classList.add("is-visible");
+        const ttRect = ott.getBoundingClientRect();
+        // Position tooltip near cursor but stay inside panel
+        let left = e.clientX - rect.left + 12;
+        let top  = e.clientY - rect.top  + 12;
+        if (left + ttRect.width > rect.width) left = rect.width - ttRect.width - 6;
+        ott.style.left = left + "px";
+        ott.style.top  = top  + "px";
+      });
+      objSvg.addEventListener("mouseleave", () => {
+        ott.classList.remove("is-visible");
+      });
+    }
+
+    /**
+     * YouTube-style auto-hide controller for the overlay player bar.
+     *  - Show on mouseenter / mousemove over the .mc-panel
+     *  - Auto-hide ~2.5s after last activity, but ONLY while the video is
+     *    playing. While paused, controls stay visible (matches YT behavior).
+     *  - Stay visible while user is dragging slider or composite-objective.
+     *  - Hide ~400ms after cursor leaves the panel (small grace period so
+     *    cursor briefly flying off doesn't immediately hide the controls).
+     */
+    function setupPlayerBarAutoHide() {
+      const mcPanel = document.querySelector(".mc-panel");
+      const bar = document.getElementById("player-bar");
+      const videoEl = document.getElementById("mc-video");
+      const HIDE_AFTER_MS = 2500;
+      let hideTimer = null;
+      let cursorOnPanel = false;
+
+      const cancelHide = () => {
+        if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+      };
+      const tryHide = () => {
+        if (isDragging || isDraggingObj) return;          // drag in progress
+        if (videoEl.paused) return;                        // paused → keep visible
+        if (bar.matches(":hover")) return;                 // cursor on the bar itself
+        bar.classList.remove("is-visible");
+      };
+      const scheduleHide = (delay) => {
+        cancelHide();
+        hideTimer = setTimeout(tryHide, delay);
+      };
+      const show = () => {
+        bar.classList.add("is-visible");
+        cancelHide();
+        if (cursorOnPanel && !videoEl.paused) {
+          scheduleHide(HIDE_AFTER_MS);
+        }
+      };
+
+      mcPanel.addEventListener("mouseenter", () => { cursorOnPanel = true; show(); });
+      mcPanel.addEventListener("mousemove",  () => { cursorOnPanel = true; show(); });
+      mcPanel.addEventListener("mouseleave", () => {
+        cursorOnPanel = false;
+        scheduleHide(400);
+      });
+      videoEl.addEventListener("pause", () => {
+        bar.classList.add("is-visible");                   // always visible while paused
+        cancelHide();
+      });
+      videoEl.addEventListener("play", () => {
+        if (cursorOnPanel) scheduleHide(HIDE_AFTER_MS);
+      });
+
+      // Initial state: visible (because video is paused on load)
+      bar.classList.add("is-visible");
+    }
+
+    // raf loop — hybrid driver. At low speeds (≤4×) we trust the browser's
+    // native playback (smooth, GPU-decoded). At high speeds (16×, 32×) we
+    // bypass it and manually advance video.currentTime each frame, because
+    // h264 decoders silently cap actual playback rate at ~4× even when you
+    // set playbackRate=32. Manual advancement turns into rapid seeks
+    // (fast-forward scrub), which is what 16×/32× implies UX-wise.
+    let lastWallclockMs = null;
+    function rafLoop() {
+      requestAnimationFrame(rafLoop);
+      if (!SEGMENTS.length || !isPlaying) {
+        lastWallclockMs = null;
+        return;
+      }
+      const videoEl = document.getElementById("mc-video");
+      const speedEl = document.getElementById("speed-selector");
+      const speed = speedEl ? parseFloat(speedEl.value) : 1;
+
+      const now = performance.now();
+      const dt = lastWallclockMs !== null ? Math.min(0.1, (now - lastWallclockMs) / 1000) : 0;
+      lastWallclockMs = now;
+
+      // ===== Refactor pause segments — manual time advance =====
+      // pause segments have no video (videoEl stays paused on the
+      // previous iter's last frame), so videoEl.currentTime won't
+      // advance. Drive playbackT manually by wallclock dt × speed.
+      const pauseSeg = findSegment(playbackT);
+      if (pauseSeg && pauseSeg.kind === 'refactor_pause') {
+        if (!videoEl.paused) videoEl.pause();
+        let newT = playbackT + dt * speed;
+        if (newT >= pauseSeg.tEnd) {
+          const segIdx = SEGMENTS.indexOf(pauseSeg);
+          if (segIdx < SEGMENTS.length - 1) {
+            const next = SEGMENTS[segIdx + 1];
+            applyTime(next.tStart, /*sourceFromVideo=*/ false);
+            if (next.kind === 'video') {
+              videoEl.play().catch(() => {});
+            }
+          } else {
+            isPlaying = false;
+            d3.select("#play-btn").classed("is-playing", false).text("▶");
+            applyTime(TOTAL_DURATION, /*sourceFromVideo=*/ false);
+          }
+          return;
+        }
+        applyTime(newT, /*sourceFromVideo=*/ false);
+        return;
+      }
+
+      // ===== Native playback (all speeds 1×-32×) =====
+      // Previously this branch handled only 1×/2×/4× and a manual-scrub branch
+      // tried to handle 8×+ via paused + currentTime= writes. The manual path
+      // turned out to be broken (currentTime= on a paused video does not
+      // reliably trigger a compositor repaint across all browsers/OSes,
+      // observed on user's Linux Chrome). Native playbackRate scales well
+      // beyond 4× in modern Chrome (≤16) / Firefox (32+); even when the
+      // browser silently caps the rate, the video still PLAYS (smooth, visible
+      // motion) and the chart cursor follows the actual playback via
+      // videoEl.currentTime — chart and video stay synchronized to whatever
+      // effective rate the browser delivers.
+      const seg = findSegment(playbackT);
+      if (!seg) return;
+      const segIdx = SEGMENTS.indexOf(seg);
+      // Use min(seg.dur, videoEl.duration) — if the on-disk MP4 is shorter
+      // than seg.dur (e.g. after psn_render_jobs.json was extended but
+      // before the re-render finished), fall back to the real file length
+      // so the seg auto-advance still fires at the actual video end.
+      const fileDur = (videoEl.duration && isFinite(videoEl.duration) && videoEl.duration > 0)
+        ? videoEl.duration : seg.dur;
+      const effDur = Math.min(seg.dur, fileDur);
+      const atSegEnd = videoEl.currentTime >= effDur - 0.05;
+
+      // End-of-segment: handle BEFORE the paused early-return so the
+      // transition still fires when the browser auto-pauses the <video>
+      // at the very end of its duration.
+      if (atSegEnd) {
+        if (segIdx < SEGMENTS.length - 1) {
+          // Auto-advance to next segment. play() may reject while the
+          // new src is still loading; the mid-seg retry below picks it
+          // up on the next frame once readyState ≥ 2.
+          // SKIP play() if the next segment is a refactor pause —
+          // pause segments keep the video paused and let rafLoop's
+          // pause branch advance playbackT manually.
+          const next = SEGMENTS[segIdx + 1];
+          applyTime(next.tStart, /*sourceFromVideo=*/ false);
+          if (next.kind !== 'refactor_pause') {
+            videoEl.play().catch(() => {});
+          }
+        } else {
+          // End of last segment — pause (don't auto-reset position).
+          isPlaying = false;
+          videoEl.pause();
+          d3.select("#play-btn").classed("is-playing", false).text("▶");
+        }
+        return;
+      }
+
+      // Mid-segment but browser has paused us (e.g. fresh src= swap is
+      // still loading and the play() right after applyTime rejected).
+      // Retry once the clip has buffered enough.
+      if (videoEl.paused && videoEl.readyState >= 2 && isPlaying) {
+        videoEl.play().catch(() => {});
+      }
+      if (videoEl.paused || videoEl.readyState < 2) return;
+
+      // Normal mid-segment playback: read videoEl.currentTime → playbackT.
+      // Clamp via setSafePlaybackRate — Chrome caps at 16; if user picks 32
+      // the function steps down to a supported value without throwing.
+      setSafePlaybackRate(videoEl, speed);
+      const newT = seg.tStart + videoEl.currentTime;
+      applyTime(newT, /*sourceFromVideo=*/ true);
+    }
+
+    // ============== Bootstrap ==============
+    fetch(DATA_URL)
+      .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(data => {
+        DATA = data;
+        // Compute per-frame chart x (chart x = data iter index now —
+        // see computeChartX docstring). prependSyntheticInitFrame and
+        // transformRTaskRollingWindow are no longer called: both
+        // fabricated chart values that didn't reflect PSN's actual
+        // telemetry. The Composite Objective panel now displays
+        // PSN's emitted values verbatim. Functions remain defined
+        // (lower in the file) in case we want to revive the "ramping"
+        // narrative — but by default the chart shows raw PSN data.
+        computeChartX(DATA.frames);
+        renderLegend();
+        setupGraphSVG();
+        layoutAPIs();
+        layoutPrimitives();
+        layoutSkillsViaForce();
+        setupObjPanel();
+        buildSegments();
+        setupControls();
+        // Start at t=0 — the beginning of the first videoed iter, paused.
+        applyTime(0, false);
+        // Start the raf loop (no-op while !isPlaying)
+        requestAnimationFrame(rafLoop);
+
+        // Diagnostic logging gated by ?debug=1 URL param. Open DevTools Console
+        // and append ?debug=1 to the page URL; will log video state every 500ms.
+        // Useful for diagnosing speed/playback issues — confirms whether the
+        // browser is actually honoring playbackRate, whether currentTime is
+        // advancing at the expected rate, and what the video element's
+        // readyState is.
+        const DEBUG_PLAYBACK = new URLSearchParams(location.search).get('debug') === '1';
+        if (DEBUG_PLAYBACK) {
+          console.log('[hero-debug] enabled — logging every 500ms');
+          let prevCurrentTime = 0;
+          let prevTs = performance.now();
+          setInterval(() => {
+            const v = document.getElementById('mc-video');
+            const sel = document.getElementById('speed-selector');
+            const nowMs = performance.now();
+            const dtMs = nowMs - prevTs;
+            const dCurrentTime = (v?.currentTime || 0) - prevCurrentTime;
+            const observedRate = dtMs > 0 ? (dCurrentTime / (dtMs / 1000)) : 0;
+            console.log('[hero-debug]', {
+              selectorSpeed: sel?.value,
+              playbackRate: v?.playbackRate,
+              currentTime: v?.currentTime?.toFixed(3),
+              observedRate: observedRate.toFixed(2) + 'x',
+              duration: v?.duration?.toFixed(3),
+              readyState: v?.readyState,
+              paused: v?.paused,
+              playbackT: playbackT?.toFixed(3),
+              src: (v?.src || '').split('/').pop()
+            });
+            prevCurrentTime = v?.currentTime || 0;
+            prevTs = nowMs;
+          }, 500);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        document.querySelector("h1").textContent = "Failed to load data: " + err.message;
+        document.querySelector("h1").style.color = "#b23b3b";
+      });
+  </script>
+</body>
+</html>

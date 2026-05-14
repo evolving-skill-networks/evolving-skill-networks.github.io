@@ -1,0 +1,24 @@
+{
+  "src_duration": 297.866667,
+  "out_duration": 22.817000000000007,
+  "active_segments": [
+    {
+      "src_start": 0.0,
+      "src_end": 0.7833,
+      "out_start": 0.0,
+      "out_end": 0.7833
+    },
+    {
+      "src_start": 174.233,
+      "src_end": 190.033,
+      "out_start": 0.7833,
+      "out_end": 16.5833
+    },
+    {
+      "src_start": 291.633,
+      "src_end": 297.8667,
+      "out_start": 16.5833,
+      "out_end": 22.817
+    }
+  ]
+}

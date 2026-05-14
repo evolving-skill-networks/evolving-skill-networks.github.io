@@ -1,0 +1,9 @@
+milestone,PSN_mean,PSN_std,PSN_success_count,PSN_N,Voyager_mean,Voyager_std,Voyager_success_count,Voyager_N
+oak_log,0.0,0.0,5,6,2.3,3.7,6,6
+wooden_pickaxe,7.3,3.6,6,6,5.2,3.8,6,6
+stone_pickaxe,21.5,4.3,6,6,23.5,32.6,6,6
+iron_ingot,36.3,12.6,6,6,52.4,40.0,5,6
+iron_pickaxe,38.2,12.5,6,6,59.8,40.7,4,6
+diamond,42.0,13.5,6,6,114.5,26.5,2,6
+diamond_pickaxe,43.8,13.0,6,6,94.0,0.0,1,6
+obsidian,nan,nan,0,6,nan,nan,0,6
