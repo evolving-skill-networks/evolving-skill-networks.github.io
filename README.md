@@ -3,7 +3,7 @@
 Static project website for *Evolving Programmatic Skill Networks* (PSN).
 Pure HTML/CSS/JS, no build step.
 
-Live: https://hcshi.com/evolving-skill-networks/
+Live: https://mrbearwithhissword.github.io/evolving-skill-networks/
 
 ## Local preview
 
